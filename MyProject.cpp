@@ -25,21 +25,22 @@ struct element {
 };
 
 const std::vector<element> SceneToLoad = {
-	{"models/ceiling.obj", "textures/EOBSLM04.png"},
+	{"models/ceiling.obj", "textures/EOBFLT12.png"},
 	{"models/doors.obj", "textures/EBBRD01.png"},
 	{"models/door1.obj","textures/EOBDR02.png"},
 	{"models/door2.obj","textures/EOBDR02.png"},
 	{"models/door3.obj","textures/EOBDR02.png"},
 	{"models/door4.obj","textures/EOBDR02.png"},
 	{"models/door5.obj","textures/EOBDR02.png"},
-	{"models/lever5.obj","textures/EOBDR02.png"},
-	{"models/lever3.obj","textures/EOBDR02.png"},
-	{"models/lever1.obj","textures/EOBDR02.png"},
-	{"models/goldKeyHole4.obj","textures/EOBDR02.png"},
-	{"models/copperKeyHole.obj","textures/EOBDR02.png"},
+	{"models/lever5.obj","textures/SlotHandle.png"},
+	{"models/lever3.obj","textures/SlotHandle.png"},
+	{"models/lever1.obj","textures/SlotHandle.png"},
+	{"models/goldKeyHole4.obj","textures/GoldKey.png"},
+	{"models/copperKeyHole.obj","textures/CopperKey.png"},
 	{"models/floor.obj","textures/EOBSLM04.png"},
-	{"models/goldKey.obj","textures/EOBSLM04.png"},
-	{"models/copperKey.obj","textures/EOBSLM04.png"}
+	{"models/goldKey.obj","textures/GoldKey.png"},
+	{"models/copperKey.obj","textures/CopperKey.png"},
+	{"models/walls.obj", "textures/EOBRB01.png"}
 };
 
 
@@ -115,10 +116,14 @@ class MyProject : public BaseProject {
 	Texture TCopperKey;
 	DescriptorSet DSCopperKey;
 
+	Model MWalls;
+	Texture TWalls;
+	DescriptorSet DSWalls;
 
-	std::vector<Model> ModelToLoad = { MCeiling,MDoors,MDoor1,MDoor2,MDoor3,MDoor4,MDoor5,MLever5,MLever3,MLever1,MGoldHole,MCopperHole,MFloor,MGoldKey,MCopperKey};
-	std::vector<Texture> TextureToLoad = { TCeiling,TDoors,TDoor1,TDoor2,TDoor3,TDoor4,TDoor5,TLever5,TLever3,TLever1,TGoldHole,TCopperHole,TFloor,TGoldKey,TCopperKey };
-	std::vector<DescriptorSet> DescriptorToLoad = { DSCeiling,DSDoors,DSDoor1,DSDoor2,DSDoor3,DSDoor4,DSDoor5,DSLever5,DSLever3,DSLever1,DSGoldHole,DSCopperHole,DSFloor,DSGoldKey,DSCopperKey };
+
+	std::vector<Model> ModelToLoad = { MCeiling,MDoors,MDoor1,MDoor2,MDoor3,MDoor4,MDoor5,MLever5,MLever3,MLever1,MGoldHole,MCopperHole,MFloor,MGoldKey,MCopperKey,MWalls};
+	std::vector<Texture> TextureToLoad = { TCeiling,TDoors,TDoor1,TDoor2,TDoor3,TDoor4,TDoor5,TLever5,TLever3,TLever1,TGoldHole,TCopperHole,TFloor,TGoldKey,TCopperKey,TWalls};
+	std::vector<DescriptorSet> DescriptorToLoad = { DSCeiling,DSDoors,DSDoor1,DSDoor2,DSDoor3,DSDoor4,DSDoor5,DSLever5,DSLever3,DSLever1,DSGoldHole,DSCopperHole,DSFloor,DSGoldKey,DSCopperKey,DSWalls};
 	
 	// Here you set the main application parameters
 	void setWindowParameters() {
@@ -129,9 +134,9 @@ class MyProject : public BaseProject {
 		initialBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f};
 		
 		// Descriptor pool sizes
-		uniformBlocksInPool = 15;
-		texturesInPool = 15;
-		setsInPool = 15;
+		uniformBlocksInPool = 16;
+		texturesInPool = 16;
+		setsInPool = 16;
 	}
 	
 	void localInit() {
@@ -142,7 +147,7 @@ class MyProject : public BaseProject {
 
 		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSL1 });
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			ModelToLoad[i].init(this, SceneToLoad[i].ObjFile);
 			TextureToLoad[i].init(this, SceneToLoad[i].TextureFile);
 			DescriptorToLoad[i].init(this, &DSL1, {
@@ -154,15 +159,11 @@ class MyProject : public BaseProject {
 
 	// Here you destroy all the objects you created!		
 	void localCleanup() {
-		//DSCeiling.cleanup();
-		//TCeiling.cleanup();
-		//MCeiling.cleanup();
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			DescriptorToLoad[i].cleanup();
 			ModelToLoad[i].cleanup();
 			TextureToLoad[i].cleanup();
 		}
-
 		P1.cleanup();
 		DSL1.cleanup();
 	}
@@ -175,7 +176,7 @@ class MyProject : public BaseProject {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 				P1.graphicsPipeline);
 				
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			VkBuffer vertexBuffers[] = { ModelToLoad[i].vertexBuffer };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
@@ -208,7 +209,7 @@ class MyProject : public BaseProject {
 		float deltaT = time - lastTime;
 		lastTime = time;
 
-		const float ROT_SPEED = glm::radians(60.0f);
+		const float ROT_SPEED = glm::radians(2000.0f);
 		const float MOVE_SPEED = 1.75f;
 
 		static float debounce = time;
@@ -218,30 +219,27 @@ class MyProject : public BaseProject {
 		Prj = glm::mat4(0.5, 0, 0, 0, 0, -0.666667, 0, 0, -0.1768, 0.235733, -0.0625, 0, 0, 0, 0.25, 1);
 
 		// Updates unifoms for the objects
-		glm::mat3 CamDir = glm::mat3(1.0f);
-		glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
-		glm::vec3 RobotPos = glm::vec3(3, 0, 2);
+		static glm::mat3 CamDir = glm::mat3(1.0f);
+		static glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
+		static glm::vec3 RobotPos = glm::vec3(3, 0, 2);
 		glm::vec3 RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
-		float lookYaw = 0.0;
-		float lookPitch = 0.0;
-		float lookRoll = 0.0;
+		static float lookYaw = 0.0;
+		static float lookPitch = 0.0;
+		static float lookRoll = 0.0;
 					
 		UniformBufferObject ubo{};
 
-		//ubo.model = glm::rotate(glm::mat4(1.0f),
-		//						time * glm::radians(90.0f),
-		//						glm::vec3(0.0f, 0.0f, 1.0f));
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-			lookYaw += deltaT * ROT_SPEED;
-		}
-		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-			lookYaw -= deltaT * ROT_SPEED;
-		}
-		if (glfwGetKey(window, GLFW_KEY_UP)) {
 			lookPitch += deltaT * ROT_SPEED;
 		}
-		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
 			lookPitch -= deltaT * ROT_SPEED;
+		}
+		if (glfwGetKey(window, GLFW_KEY_UP)) {
+			lookYaw += deltaT * ROT_SPEED;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+			lookYaw -= deltaT * ROT_SPEED;
 		}
 		if (glfwGetKey(window, GLFW_KEY_Q)) {
 			lookRoll -= deltaT * ROT_SPEED;
@@ -266,17 +264,11 @@ class MyProject : public BaseProject {
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
 
-
 		glm::mat4 CamMat = glm::translate(glm::transpose(glm::mat4(CamDir)), -CamPos);
-
 		glm::vec3 RRCDP = glm::vec3(glm::rotate(glm::mat4(1), lookYaw, glm::vec3(0, 1, 0)) *
 			glm::vec4(RobotCamDeltaPos, 1.0f));
-
-
 		CamMat = LookInDirMat(RobotPos+RRCDP, glm::vec3(lookYaw, lookPitch, lookRoll));
-		//ubo.mMat = glm::scale(ubo.mMat, glm::vec3(SceneToLoad[j].scale));
-		//ubo.mvpMat = Prj * CamMat * ubo.mMat;
-		//ubo.nMat = glm::inverse(glm::transpose(ubo.mMat));
+
 
 
 		ubo.view = CamMat;
@@ -287,9 +279,66 @@ class MyProject : public BaseProject {
 		
 		void* data;
 
+		//door1 translate(0.35,-0.4,0)*rotation(lungo z di +90)
+		//door2 translate(0.45,-0.4,0)*rotation(lungo z di +90)
+		//door3 translation(0.4,0.4,0)*rotation(lungo z di -90)
+		//door4 translation(0.4,-0.35,0)*rotation(lungo z di -90)
+		//door5 translation(-0.4,0.35,0)*rotation(lungo z di -90)
+		//lever1 rotation(asse x di +70)
+		//lever3 rotation(asse x di +70)
+		//lever5 rotation(asse x di +70)
 		// Here is where you actually update your uniforms
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			ubo.model = glm::mat4(1);
+			if (i==2) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0.35, 0.0, 0.4))*glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))*
+					glm::rotate(glm::mat4(1.0), glm::radians(-90.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, -3));
+			}
+			if (i == 3) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0.45, 0.0, 0.4))*glm::translate(glm::mat4(1.0), glm::vec3(7, 0.0, 8))*
+					glm::rotate(glm::mat4(1.0), glm::radians(-90.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-7, 0.0, -8));
+			}
+			if (i == 4) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0.4, 0.0, -0.4))*glm::translate(glm::mat4(1.0), glm::vec3(9, 0.0, 3))*
+					glm::rotate(glm::mat4(1.0), glm::radians(-90.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-9, 0.0, -3));
+			}
+			if (i == 5) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0.4, 0.0, 0.35))*glm::translate(glm::mat4(1.0), glm::vec3(12, 0.0, 4))*
+					glm::rotate(glm::mat4(1.0), glm::radians(-90.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-12, 0.0, -4));
+			}
+			if (i == 6) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(-0.4, 0.0, -0.35))*glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))*
+					glm::rotate(glm::mat4(1.0), glm::radians(90.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2));
+			}
+			if (i == 7) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(3.3, 0.5, -1.5))*
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(70.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-3.3, -0.50, 1.5));
+			}
+			if (i == 8) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(8.3, 0.50, 3.5))*
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(70.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-8.3, -0.50, -3.5));
+			}
+			if (i == 9) {
+				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(2.5, 0.50, -2.2))*
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(70.0f), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-2.5, -0.50, 2.2));
+			}
+			
 			vkMapMemory(device, DescriptorToLoad[i].uniformBuffersMemory[0][currentImage], 0,
 				sizeof(ubo), 0, &data);
 			memcpy(data, &ubo, sizeof(ubo));
