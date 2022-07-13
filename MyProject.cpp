@@ -129,9 +129,9 @@ class MyProject : public BaseProject {
 	void setWindowParameters() {
 		// window size, titile and initial background
 		windowWidth = 800;
-		windowHeight = 600;
+		windowHeight = 800;
 		windowTitle = "My Project";
-		initialBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f};
+		initialBackgroundColor = {0.0f, 0.0f, 0.0f, 0.0f};
 		
 		// Descriptor pool sizes
 		uniformBlocksInPool = 16;
@@ -221,10 +221,10 @@ class MyProject : public BaseProject {
 		// Updates unifoms for the objects
 		static glm::mat3 CamDir = glm::mat3(1.0f);
 		static glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
-		static glm::vec3 RobotPos = glm::vec3(3, 0, 2);
+		static glm::vec3 RobotPos = glm::vec3(1, 0, 3);
 		glm::vec3 RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
 		static float lookYaw = 0.0;
-		static float lookPitch = 0.0;
+		static float lookPitch = 270.0;
 		static float lookRoll = 0.0;
 					
 		UniformBufferObject ubo{};
@@ -248,24 +248,25 @@ class MyProject : public BaseProject {
 			lookRoll += deltaT * ROT_SPEED;
 		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
-			RobotPos = RobotPos - MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), lookYaw,
+			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 		}
 		if (glfwGetKey(window, GLFW_KEY_D)) {
-			RobotPos = RobotPos + MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), lookYaw,
+			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 		}
 		if (glfwGetKey(window, GLFW_KEY_W)) {
-			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), lookYaw,
+			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
-			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), lookYaw,
+			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
 
-		glm::mat4 CamMat = glm::translate(glm::transpose(glm::mat4(CamDir)), -CamPos);
-		glm::vec3 RRCDP = glm::vec3(glm::rotate(glm::mat4(1), lookYaw, glm::vec3(0, 1, 0)) *
+
+		static glm::mat4 CamMat = glm::translate(glm::transpose(glm::mat4(CamDir)), -CamPos);
+		glm::vec3 RRCDP = glm::vec3(glm::rotate(glm::mat4(1), lookPitch, glm::vec3(0, 1, 0)) *
 			glm::vec4(RobotCamDeltaPos, 1.0f));
 		CamMat = LookInDirMat(RobotPos+RRCDP, glm::vec3(lookYaw, lookPitch, lookRoll));
 
