@@ -6226,7 +6226,11 @@ class json_sax_dom_parser
 
     /// the parsed JSON value
     BasicJsonType& root;
-    /// stack to model hierarchy of values
+    /// stack to 
+    
+    
+    
+    hierarchy of values
     std::vector<BasicJsonType*> ref_stack {};
     /// helper to hold the reference for the next object element
     BasicJsonType* object_element = nullptr;

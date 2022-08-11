@@ -685,17 +685,37 @@ protected:
 		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
 		static glm::vec3 D1Rot = glm::vec3(0.0, 0.0, 0.0);
 
-		//door1 translate(0.35,-0.4,0)*rotation(lungo z di +90)
-		//door2 translate(0.45,-0.4,0)*rotation(lungo z di +90)
-		//door3 translation(0.4,0.4,0)*rotation(lungo z di -90)
-		//door4 translation(0.4,-0.35,0)*rotation(lungo z di -90)
-		//door5 translation(-0.4,0.35,0)*rotation(lungo z di -90)
-		//lever1 rotation(asse x di +70)
-		//lever3 rotation(asse x di +70)
-		//lever5 rotation(asse x di +70)
+		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D1Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 D2Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D2Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 D3Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D3Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 D4Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D4Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 D5Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D5Rot = glm::vec3(0.0, 0.0, 0.0);
+
+
+		static glm::vec3 L5Pos = glm::vec3(3.3, 0.5, -1.5);
+		static glm::vec3 L5Rot = glm::vec3(70.0, 0.0, 0.0);
+
+		static glm::vec3 L3Pos = glm::vec3(8.3, 0.50, 3.5);
+		static glm::vec3 L3Rot = glm::vec3(70.0, 0.0, 0.0);
+
+		static glm::vec3 L1Pos = glm::vec3(4.2, 1.25, 3.4);
+		static glm::vec3 L1Rot = glm::vec3(0.0, -180.0, 70.0);
+
+		
+
 		// Here is where you actually update your uniforms
 		for (int i = 0; i < 24; i++) {
 			ubo.model = glm::mat4(1);
+			//door1 translate(0.35,-0.4,0)*rotation(lungo z di +90)
 			if (i==2) {
 				ubo.model = glm::translate(glm::mat4(1.0), D1Pos)*glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))*
 					glm::rotate(glm::mat4(1.0), glm::radians(D1Rot.y), glm::vec3(0, 1, 0)) *
@@ -744,16 +764,46 @@ protected:
 					glm::rotate(glm::mat4(1.0), glm::radians(L3Rot.x), glm::vec3(1, 0, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(L3Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), -L3Pos);
 			}
+			//lever1 rotation(asse x di +70)
 			if (i == 9) {
-				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(2.5, 0.50, -2.2))*
-					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(70.0f), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-2.5, -0.50, 2.2));
+				ubo.model = glm::translate(glm::mat4(1.0), L1Pos) *
+					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.y), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.x), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.z), glm::vec3(0, 0, 1)) * glm::translate(glm::mat4(1.0), glm::vec3(-3.3, -0.5, -2.5));
 			}
 			
 			vkMapMemory(device, DescriptorToLoad[i].uniformBuffersMemory[0][currentImage], 0, sizeof(ubo), 0, &data);
 			memcpy(data, &ubo, sizeof(ubo));
 			vkUnmapMemory(device, DescriptorToLoad[i].uniformBuffersMemory[0][currentImage]);
+		}
+
+		//door1 translate(0.35,-0.4,0)*rotation(lungo z di -90)
+		if (glfwGetKey(window, GLFW_KEY_K)) {
+			printf("LOOK: %f\n", lookPitch);
+			if ( RobotPos.x > 5.0 && RobotPos.x < 5.5 && 3.5 < RobotPos.z && RobotPos.z < 4.0 && (lookPitch > 70.0 && lookPitch < 110.0)) {
+				D1Pos = glm::vec3(-0.35, 0.0, 0.4);
+				D1Rot.y = 90.0f;
+				L1Pos = glm::vec3(3.75, 0.5, 3.4);
+				L1Rot.z = 0.0f;
+			}
+			if (RobotPos.x > 5.75 && RobotPos.x < 6.5 && 7.75 < RobotPos.z && RobotPos.z < 8.5 && (lookPitch > 250.0 && lookPitch < 290.0)) {
+				D2Pos = glm::vec3(0.45, 0.0, 0.4);
+				D2Rot.y = -90.0f;
+			}
+			if (RobotPos.x > 8.0 && RobotPos.x < 8.5 && 4.00 < RobotPos.z && RobotPos.z < 4.75 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
+				D3Pos = glm::vec3(0.4, 0.0, -0.4);
+				D3Rot.y = -90.0f;
+				L3Rot.x = 0.0;
+			}
+			if (RobotPos.x > 11.5 && RobotPos.x < 12.0 && 2.75 < RobotPos.z && RobotPos.z < 3.5 && (lookPitch > 160.0 && lookPitch < 200.0)) {
+				D4Pos = glm::vec3(0.4, 0.0, 0.35);
+				D4Rot.y = -90.0f;
+			}
+			if (RobotPos.x > 3.0 && RobotPos.x < 3.5 && -1.00 < RobotPos.z && RobotPos.z < -0.25 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
+				D5Pos = glm::vec3(-0.4, 0.0, -0.35);
+				D5Rot.y = -90.0f;
+				L5Rot.x = 0.0;
+			}
 		}
 	}	
 };
