@@ -24,3 +24,73 @@
 {"*"," "," "," ","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"},
 {"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"}
 };
+
+
+
+
+if (blockLimit[0] < RobotPos[0])
+		{
+
+			matrixCoo[0]++;
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*")
+			{
+				RobotPos=oldPos;
+				matrixCoo[0]--;
+			}
+			else {
+				blockLimit[1]++;
+				blockLimit[0]++;
+			}
+		}
+
+		if (blockLimit[1] > RobotPos[0])
+		{
+
+			matrixCoo[0]--;
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*")
+			{
+				RobotPos = oldPos;
+				matrixCoo[0]++;
+			}
+			else {
+				blockLimit[1]--;
+				blockLimit[0]--;
+			}
+		}
+
+		if (blockLimit[2] < RobotPos[2])
+		{
+
+			matrixCoo[1]++;
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*")
+			{
+				RobotPos = oldPos;
+				matrixCoo[1]--;
+			}
+			else {
+				blockLimit[2]++;
+				blockLimit[3]++;
+			}
+		}
+
+		if (blockLimit[3] > RobotPos[2])
+		{
+
+			matrixCoo[1]--;
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*")
+			{
+				RobotPos = oldPos;
+				matrixCoo[1]++;
+			}
+			else {
+				blockLimit[2]--;
+				blockLimit[3]--;
+			}
+		}
+
+
+
+
+
+
+
