@@ -277,6 +277,60 @@ protected:
 	}
 
 
+	void checkSide(glm::vec4 *blockLimit, glm::vec4 *recentlyWalls, glm::vec2 *matrixCoo, int direction) {
+
+		static glm::vec2 coo = *matrixCoo;
+		static glm::vec4 limit = *blockLimit;
+		static glm::vec4 recent = *recentlyWalls;
+		float value;
+		int column = 0;
+		int row = 0;
+
+		if (direction == 3 || direction == 1)
+		{
+			value = 0.1;
+			if (direction == 3)
+			{
+				column = -1;
+			}
+			else {
+				row = -1;
+			}
+			
+		}
+		else {
+			value = -0.1;
+			if (direction == 2)
+			{
+				column = 1;
+			}
+			else {
+				row = 1;
+			}
+		}
+
+
+		if (vettore[coo[1]+column][coo[0]+row] == "*")
+		{
+			if (recent[direction] == 0)
+			{
+				limit[direction] = limit[direction] + value;
+				recent[direction] = 1;
+			}
+		}
+		else {
+			if (recent[direction] == 1)
+			{
+				printf("aumento di 0.2 su ");
+				limit[direction] = limit[direction] - value;
+				recent[direction] = 0;
+			}
+		}
+		*recentlyWalls = recent;
+		*blockLimit = limit;
+	}
+
+
 
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
@@ -369,12 +423,6 @@ protected:
 		}
 
 
-		//if (!canStep(RobotPos, &blockLimit, &matrixCoo))
-		//{
-		//	oldPos = oldPos - glm::vec3(0, 0, -0.2);
-		//	RobotPos = oldPos;
-		//}
-
 		static bool dCheck1 = false;
 		static bool dCheck2 = false;
 		static bool dCheck3 = false;
@@ -386,7 +434,6 @@ protected:
 		if (blockLimit[0] < RobotPos[0])
 		{
 			matrixCoo[0]++;
-
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 3.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false || blockLimit[0] == 6.5 && RobotPos.z <= 8.5 && RobotPos.z >= 7.6 && dCheck2 == false)
 			{
 				RobotPos = oldPos;
@@ -411,39 +458,8 @@ protected:
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 
-				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
-				{
-					//check if wall first time there, if yes then i can reduce it otherwise is already reduced(se ce muro già da prima mantengo il valore)
-					if (recentlyWalls[2] == 0)
-					{
-						blockLimit[2] = blockLimit[2] - 0.1;
-						recentlyWalls[2] = 1;
-					}
-				}
-				else {
-					// cerco che c'era un muro prima (prima c'era muro adesso no)
-					if (recentlyWalls[2] == 1)
-					{
-						blockLimit[2] = blockLimit[2] + 0.1;
-						recentlyWalls[2] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[3] == 0)
-					{
-						blockLimit[3] = blockLimit[3] + 0.1;
-						recentlyWalls[3] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[3] == 1)
-					{
-						blockLimit[3] = blockLimit[3] - 0.1;
-						recentlyWalls[3] = 0;
-					}
-
-				}
+				checkSide(&blockLimit,&recentlyWalls,&matrixCoo,2);
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 3);
 
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
@@ -453,7 +469,6 @@ protected:
 
 		if (blockLimit[1] > RobotPos[0])
 		{
-
 			matrixCoo[0]--;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false)
 			{
@@ -466,53 +481,23 @@ protected:
 				//if yes and i have a wall same resut else plus 0.2
 				//in this case olny for block 2 and 3 
 				printf("sto andando dietro ");
+				blockLimit[0] = blockLimit[1];
+				recentlyWalls[0] = 0;
 
 				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
 				{
-					blockLimit[0] = blockLimit[1];
 					blockLimit[1] = blockLimit[1] - 0.9;
 					recentlyWalls[1] = 1;
-					recentlyWalls[0] = 0;
 				}
 				else {
-					blockLimit[0] = blockLimit[1];
-					recentlyWalls[0] = 0;
 					blockLimit[1] --;
 				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
+				
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 2);
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 3);
 
-				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[2] == 0)
-					{
-						blockLimit[2] = blockLimit[2] - 0.1;
-						recentlyWalls[2] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[2] == 1)
-					{
-						blockLimit[2] = blockLimit[2] + 0.1;
-						recentlyWalls[2] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[3] == 0)
-					{
-						blockLimit[3] = blockLimit[3] + 0.1;
-						recentlyWalls[3] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[3] == 1)
-					{
-						blockLimit[3] = blockLimit[3] - 0.1;
-						recentlyWalls[3] = 0;
-					}
-
-				}
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
 			}
@@ -523,7 +508,6 @@ protected:
 		//verso giu
 		if (blockLimit[2] < RobotPos[2])
 		{
-
 			matrixCoo[1]++;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[2] == -2.5 && RobotPos.x <= 4.5 && RobotPos.x >= 3.6 && dCheck5 == false || blockLimit[2] == 2.5 && RobotPos.x <= 9.5 && RobotPos.x >= 8.6 && dCheck3 == false || blockLimit[2] == 3.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
 			{
@@ -532,56 +516,20 @@ protected:
 			}
 			else {
 				printf("sto andando giu ");
-
+				blockLimit[3] = blockLimit[2];
+				recentlyWalls[3] = 0;
 				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
 				{
-					blockLimit[3] = blockLimit[2];
 					blockLimit[2] = blockLimit[2] + 0.9;
 					recentlyWalls[2] = 1;
-					recentlyWalls[3] = 0;
-
 				}
 				else {
-					blockLimit[3] = blockLimit[2];
-					recentlyWalls[3] = 0;
 					blockLimit[2] ++;
 				}
 
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 0);
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 1);
 
-				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
-				{
-					if (recentlyWalls[0] == 0)
-					{
-						blockLimit[0] = blockLimit[0] - 0.1;
-						recentlyWalls[0] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[0] == 1)
-					{
-						blockLimit[0] = blockLimit[0] + 0.1000;
-						recentlyWalls[0] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
-				{
-					if (recentlyWalls[1] == 0)
-					{
-						//printf("prima del disastro %f ", blockLimit[1]);
-						//printf("dopo il disastro %f ", blockLimit[1]+0.1);
-						blockLimit[1] = blockLimit[1] + 0.1;
-						//printf("dopo il disastro 2 %f ", blockLimit[1]);
-						recentlyWalls[1] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[1] == 1)
-					{
-						blockLimit[1] = blockLimit[1] - 0.1;
-						recentlyWalls[1] = 0;
-					}
-
-				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
@@ -593,7 +541,6 @@ protected:
 		//verso su
 		if (blockLimit[3] > RobotPos[2])
 		{
-
 			matrixCoo[1]--;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[3] == -1.5 && RobotPos.x <= 4.4 && RobotPos.x >= 3.5 && dCheck5 == false || blockLimit[3] == 3.5 && RobotPos.x <= 9.4 && RobotPos.x >= 8.5 && dCheck3 == false || blockLimit[3] == 4.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
 			{
@@ -602,51 +549,20 @@ protected:
 			}
 			else {
 				printf("sto andando su ");
-
+				blockLimit[2] = blockLimit[3];
+				recentlyWalls[2] = 0;
 				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
 				{
-					blockLimit[2] = blockLimit[3];
 					blockLimit[3] = blockLimit[3] - 0.9;
 					recentlyWalls[3] = 1;
-					recentlyWalls[2] = 0;
 				}
 				else {
-					blockLimit[2] = blockLimit[3];
-					recentlyWalls[2] = 0;
 					blockLimit[3] --;
 				}
 
-				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
-				{
-					if (recentlyWalls[0] == 0)
-					{
-						blockLimit[0] = blockLimit[0] - 0.1;
-						recentlyWalls[0] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[0] == 1)
-					{
-						blockLimit[0] = blockLimit[0] + 0.1;
-						recentlyWalls[0] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
-				{
-					if (recentlyWalls[1] == 0)
-					{
-						blockLimit[1] = blockLimit[1] + 0.1;
-						recentlyWalls[1] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[1] == 1)
-					{
-						blockLimit[1] = blockLimit[1] - 0.1;
-						recentlyWalls[1] = 0;
-					}
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 0);
+				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 1);
 
-				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
@@ -659,8 +575,6 @@ protected:
 		glm::vec3 RRCDP = glm::vec3(glm::rotate(glm::mat4(1), lookPitch, glm::vec3(0, 1, 0)) *
 			glm::vec4(RobotCamDeltaPos, 1.0f));
 		CamMat = LookInDirMat(RobotPos + RRCDP, glm::vec3(lookYaw, lookPitch, lookRoll));
-
-
 
 		ubo.view = CamMat;
 		ubo.proj = glm::perspective(glm::radians(45.0f),
