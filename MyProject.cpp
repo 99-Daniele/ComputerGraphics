@@ -6,8 +6,6 @@
 #include <iostream>
 
 
-const std::string MODEL_PATH = "models/ceiling.obj";
-const std::string TEXTURE_PATH = "textures/EOBSLM04.png";
 
 
 // The uniform buffer object used in this example
@@ -82,7 +80,6 @@ std::vector<std::vector<std::string>> vettore = {
 
 //PROBLEMI DA RISOLVERE
 //NON RIESCO A IMPORTARE IL FILE MAP.TXT E FARE OPERAZIONI SU DI ESSA
-//NON HO FATTO UNA FUNZIONE PER MANEGGIARE I MOVIMENTI ALL'INTERNO DELLA MAPPA(QUINDI HO CODICE RIDONDANTE)
 //NON HO FATTO I SHADER
 //POTREI TOGLIERE DEI TEXTURES 
 //POTREI TOGLIERE MODELS DEI DIVERSI TESTI
@@ -234,6 +231,14 @@ protected:
 						{1, TEXTURE, 0, &TextureToLoad[i]}
 				});
 		}
+
+		FILE *f;
+		char vec[100];
+		f = fopen("models/map.txt","r");
+		while (fgets(vec, 100, f) != NULL)
+		{
+			printf("%s ", vec);
+		}
 	}
 
 	// Here you destroy all the objects you created!		
@@ -296,7 +301,6 @@ protected:
 			else {
 				row = -1;
 			}
-			
 		}
 		else {
 			value = -0.1;
@@ -308,7 +312,6 @@ protected:
 				row = 1;
 			}
 		}
-
 
 		if (vettore[coo[1]+column][coo[0]+row] == "*")
 		{
@@ -347,10 +350,6 @@ protected:
 		const float MOVE_SPEED = 1.75f;
 
 		static float debounce = time;
-
-		glm::mat4 Prj = glm::mat4(1.0);
-
-		Prj = glm::mat4(0.5, 0, 0, 0, 0, -0.666667, 0, 0, -0.1768, 0.235733, -0.0625, 0, 0, 0, 0.25, 1);
 
 		std::ifstream map("models/map.txt", std::ios::ate | std::ios::binary);
 		if (!map.is_open()) {
@@ -655,51 +654,42 @@ protected:
 					glm::rotate(glm::mat4(1.0), glm::radians(L3Rot.x), glm::vec3(1, 0, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(L3Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), -L3Pos);
 			}
-
 			if (i == 9) {
 				ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(L1Pos))*
 					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.y), glm::vec3(0, 1, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.x), glm::vec3(1, 0, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(L1Rot.z), glm::vec3(0, 0, 1))* glm::translate(glm::mat4(1.0), glm::vec3(-L1Pos));
 			}
-
 			if (i == 13 || i == 17) {
 				if (kCheck2) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
-
 			}
 			if (i == 14 || i == 18) {
 				if (kCheck1) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
-
 			}
 			if (i == 19) {
 				if (dCheck1) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
-
 			}
-
 			if (i == 20) {
 				if (dCheck3) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
 			}
-
 			if (i == 23) {
 				if (dCheck2) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
 			}
-
 			if (i == 22) {
 				if (dCheck4) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
 			}
-
 			if (i == 21) {
 				if (dCheck5) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
@@ -744,7 +734,6 @@ protected:
 				L5Rot.x = 0.0;
 				dCheck5 = true;
 			}
-
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_J)) {
