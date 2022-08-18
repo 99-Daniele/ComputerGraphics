@@ -78,12 +78,15 @@ std::vector<std::vector<std::string>> vettore = {
 {"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"}
 };
 
-//PROBLEMI DA RISOLVERE
-//NON RIESCO A IMPORTARE IL FILE MAP.TXT E FARE OPERAZIONI SU DI ESSA
-//NON HO FATTO I SHADER
-//POTREI TOGLIERE DEI TEXTURES 
-//POTREI TOGLIERE MODELS DEI DIVERSI TESTI
-//NON HO CAPITO BENE QUALE SEI L'INIZIO E SE CE UN BLOCCO CHE IN REALTA NON E' MURO
+/*
+PROBLEMI DA RISOLVERE
+ 
+NON RIESCO A IMPORTARE IL FILE MAP.TXT E FARE OPERAZIONI SU DI ESSA
+NON HO FATTO I SHADER
+POTREI TOGLIERE DEI TEXTURES 
+POTREI TOGLIERE MODELS DEI DIVERSI TESTI
+NON HO CAPITO BENE QUALE SEI L'INIZIO E SE CE UN BLOCCO CHE IN REALTA NON E' MURO
+*/
 
 
 
@@ -284,6 +287,8 @@ protected:
 
 	void checkSide(glm::vec4 *blockLimit, glm::vec4 *recentlyWalls, glm::vec2 *matrixCoo, int direction) {
 
+		//printf("\n\nBL1: %f  BL2: %f  BL3: %f  BL4: %f\nRW1: %f  RW2: %f  RW3: %f  RW4: %f\nMC1: %f  MC2: %f\nDIRECTION: %d\n\n", blockLimit[0], blockLimit[1], blockLimit[2], blockLimit[3], recentlyWalls[0], recentlyWalls[1], recentlyWalls[2], recentlyWalls[3], matrixCoo[0], matrixCoo[1], direction);
+
 		static glm::vec2 coo = *matrixCoo;
 		static glm::vec4 limit = *blockLimit;
 		static glm::vec4 recent = *recentlyWalls;
@@ -376,12 +381,24 @@ protected:
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
 			lookPitch += deltaT * ROT_SPEED;
+			if (lookPitch < 0.0)
+				lookPitch += 360.0;
+			else if (lookPitch > 360.0)
+				lookPitch -= 360.0;
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
 			lookPitch -= deltaT * ROT_SPEED;
+			if (lookPitch < 0.0)
+				lookPitch += 360.0;
+			else if (lookPitch > 360.0)
+				lookPitch -= 360.0;
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP)) {
 			lookYaw += deltaT * ROT_SPEED;
+			if (lookYaw < 0.0)
+				lookYaw += 360.0;
+			else if (lookYaw > 360.0)
+				lookYaw -= 360.0;
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
 			lookYaw -= deltaT * ROT_SPEED;
@@ -404,6 +421,10 @@ protected:
 			else if (lookRoll > 360.0)
 				lookRoll -= 360.0;
 		}
+		if (glfwGetKey(window, GLFW_KEY_W)) {
+			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
@@ -412,13 +433,22 @@ protected:
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 		}
-		if (glfwGetKey(window, GLFW_KEY_W)) {
-			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
-				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
-		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+		}
+		//riporta alla posizione iniziale
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			CamDir = glm::mat3(1.0f);
+			CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
+			RobotPos = glm::vec3(1, 0, 3);
+			RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
+			lookYaw = 0.0;
+			lookPitch = 270.0;
+			lookRoll = 0.0;
+			blockLimit = glm::vec4(1.5, 0.5, 3.5, 2.5);
+			recentlyWalls = glm::vec4(0, 0, 0, 0);
+			matrixCoo = glm::vec2(7, 12);
 		}
 
 
@@ -429,10 +459,16 @@ protected:
 		static bool dCheck5 = false;
 		static bool kCheck1 = false;
 		static bool kCheck2 = false;
+		static float timer1 = 0.0;
+		static float timer2 = 0.0;
+		static float timer3 = 0.0;
+		static float timer4 = 0.0;
+		static float timer5 = 0.0;
 
 		if (blockLimit[0] < RobotPos[0])
 		{
 			matrixCoo[0]++;
+
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 3.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false || blockLimit[0] == 6.5 && RobotPos.z <= 8.5 && RobotPos.z >= 7.6 && dCheck2 == false)
 			{
 				RobotPos = oldPos;
@@ -443,7 +479,7 @@ protected:
 				blockLimit[1] = blockLimit[0];
 				recentlyWalls[1] = 0;
 
-				//controllo cosa fare se aventi ce muro 
+				//controllo cosa fare se aventi ce muro
 				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
 				{
 					blockLimit[0] = blockLimit[0] + 0.9;
@@ -457,8 +493,39 @@ protected:
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 
-				checkSide(&blockLimit,&recentlyWalls,&matrixCoo,2);
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 3);
+				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
+				{
+					//check if wall first time there, if yes then i can reduce it otherwise is already reduced(se ce muro già da prima mantengo il valore)
+					if (recentlyWalls[2] == 0)
+					{
+						blockLimit[2] = blockLimit[2] - 0.1;
+						recentlyWalls[2] = 1;
+					}
+				}
+				else {
+					// cerco che c'era un muro prima (prima c'era muro adesso no)
+					if (recentlyWalls[2] == 1)
+					{
+						blockLimit[2] = blockLimit[2] + 0.1;
+						recentlyWalls[2] = 0;
+					}
+				}
+				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
+				{
+					if (recentlyWalls[3] == 0)
+					{
+						blockLimit[3] = blockLimit[3] + 0.1;
+						recentlyWalls[3] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[3] == 1)
+					{
+						blockLimit[3] = blockLimit[3] - 0.1;
+						recentlyWalls[3] = 0;
+					}
+
+				}
 
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
@@ -468,6 +535,7 @@ protected:
 
 		if (blockLimit[1] > RobotPos[0])
 		{
+
 			matrixCoo[0]--;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false)
 			{
@@ -478,25 +546,55 @@ protected:
 				//i need if old position already has a wall
 				//if no and i have a wall minus 0.2 else same result
 				//if yes and i have a wall same resut else plus 0.2
-				//in this case olny for block 2 and 3 
+				//in this case olny for block 2 and 3
 				printf("sto andando dietro ");
-				blockLimit[0] = blockLimit[1];
-				recentlyWalls[0] = 0;
 
 				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
 				{
+					blockLimit[0] = blockLimit[1];
 					blockLimit[1] = blockLimit[1] - 0.9;
 					recentlyWalls[1] = 1;
+					recentlyWalls[0] = 0;
 				}
 				else {
+					blockLimit[0] = blockLimit[1];
+					recentlyWalls[0] = 0;
 					blockLimit[1] --;
 				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
-				
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 2);
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 3);
 
+				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
+				{
+					if (recentlyWalls[2] == 0)
+					{
+						blockLimit[2] = blockLimit[2] - 0.1;
+						recentlyWalls[2] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[2] == 1)
+					{
+						blockLimit[2] = blockLimit[2] + 0.1;
+						recentlyWalls[2] = 0;
+					}
+				}
+				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
+				{
+					if (recentlyWalls[3] == 0)
+					{
+						blockLimit[3] = blockLimit[3] + 0.1;
+						recentlyWalls[3] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[3] == 1)
+					{
+						blockLimit[3] = blockLimit[3] - 0.1;
+						recentlyWalls[3] = 0;
+					}
+
+				}
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
 			}
@@ -507,6 +605,7 @@ protected:
 		//verso giu
 		if (blockLimit[2] < RobotPos[2])
 		{
+
 			matrixCoo[1]++;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[2] == -2.5 && RobotPos.x <= 4.5 && RobotPos.x >= 3.6 && dCheck5 == false || blockLimit[2] == 2.5 && RobotPos.x <= 9.5 && RobotPos.x >= 8.6 && dCheck3 == false || blockLimit[2] == 3.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
 			{
@@ -515,20 +614,56 @@ protected:
 			}
 			else {
 				printf("sto andando giu ");
-				blockLimit[3] = blockLimit[2];
-				recentlyWalls[3] = 0;
+
 				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
 				{
+					blockLimit[3] = blockLimit[2];
 					blockLimit[2] = blockLimit[2] + 0.9;
 					recentlyWalls[2] = 1;
+					recentlyWalls[3] = 0;
+
 				}
 				else {
+					blockLimit[3] = blockLimit[2];
+					recentlyWalls[3] = 0;
 					blockLimit[2] ++;
 				}
 
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 0);
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 1);
 
+				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
+				{
+					if (recentlyWalls[0] == 0)
+					{
+						blockLimit[0] = blockLimit[0] - 0.1;
+						recentlyWalls[0] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[0] == 1)
+					{
+						blockLimit[0] = blockLimit[0] + 0.1000;
+						recentlyWalls[0] = 0;
+					}
+				}
+				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
+				{
+					if (recentlyWalls[1] == 0)
+					{
+						//printf("prima del disastro %f ", blockLimit[1]);
+						//printf("dopo il disastro %f ", blockLimit[1]+0.1);
+						blockLimit[1] = blockLimit[1] + 0.1;
+						//printf("dopo il disastro 2 %f ", blockLimit[1]);
+						recentlyWalls[1] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[1] == 1)
+					{
+						blockLimit[1] = blockLimit[1] - 0.1;
+						recentlyWalls[1] = 0;
+					}
+
+				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
@@ -540,6 +675,7 @@ protected:
 		//verso su
 		if (blockLimit[3] > RobotPos[2])
 		{
+
 			matrixCoo[1]--;
 			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[3] == -1.5 && RobotPos.x <= 4.4 && RobotPos.x >= 3.5 && dCheck5 == false || blockLimit[3] == 3.5 && RobotPos.x <= 9.4 && RobotPos.x >= 8.5 && dCheck3 == false || blockLimit[3] == 4.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
 			{
@@ -548,20 +684,51 @@ protected:
 			}
 			else {
 				printf("sto andando su ");
-				blockLimit[2] = blockLimit[3];
-				recentlyWalls[2] = 0;
+
 				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
 				{
+					blockLimit[2] = blockLimit[3];
 					blockLimit[3] = blockLimit[3] - 0.9;
 					recentlyWalls[3] = 1;
+					recentlyWalls[2] = 0;
 				}
 				else {
+					blockLimit[2] = blockLimit[3];
+					recentlyWalls[2] = 0;
 					blockLimit[3] --;
 				}
 
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 0);
-				checkSide(&blockLimit, &recentlyWalls, &matrixCoo, 1);
+				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
+				{
+					if (recentlyWalls[0] == 0)
+					{
+						blockLimit[0] = blockLimit[0] - 0.1;
+						recentlyWalls[0] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[0] == 1)
+					{
+						blockLimit[0] = blockLimit[0] + 0.1;
+						recentlyWalls[0] = 0;
+					}
+				}
+				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
+				{
+					if (recentlyWalls[1] == 0)
+					{
+						blockLimit[1] = blockLimit[1] + 0.1;
+						recentlyWalls[1] = 1;
+					}
+				}
+				else {
+					if (recentlyWalls[1] == 1)
+					{
+						blockLimit[1] = blockLimit[1] - 0.1;
+						recentlyWalls[1] = 0;
+					}
 
+				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
@@ -583,27 +750,18 @@ protected:
 
 		void* data;
 		static int var1 = 0;
+
 		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D1Rot = glm::vec3(0.0, 0.0, 0.0);
-
 		static glm::vec3 D2Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D2Rot = glm::vec3(0.0, 0.0, 0.0);
-
 		static glm::vec3 D3Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D3Rot = glm::vec3(0.0, 0.0, 0.0);
-
 		static glm::vec3 D4Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D4Rot = glm::vec3(0.0, 0.0, 0.0);
-
 		static glm::vec3 D5Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D5Rot = glm::vec3(0.0, 0.0, 0.0);
-
 
 		static glm::vec3 L5Pos = glm::vec3(3.3, 0.5, -1.5);
 		static glm::vec3 L5Rot = glm::vec3(70.0, 0.0, 0.0);
 
 		static glm::vec3 L3Pos = glm::vec3(8.3, 0.50, 3.5);
-		static glm::vec3 L3Rot = glm::vec3(70.0, 0.0, 0.0);
+		static glm::vec3 L3Rot = glm::vec3(0.0, 0.0, 0.0);
 
 		static glm::vec3 L1Pos = glm::vec3(0, 0, 0);
 		static glm::vec3 L1Rot = glm::vec3(0.0, 0.0, 0.0);
@@ -611,36 +769,120 @@ protected:
 		// Here is where you actually update your uniforms
 		for (int i = 0; i < 24; i++) {
 			ubo.model = glm::mat4(1);
-
 			if (i == 2) {
-				ubo.model = glm::translate(glm::mat4(1.0), D1Pos)*glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))*
-					glm::rotate(glm::mat4(1.0), glm::radians(D1Rot.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D1Rot.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D1Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, -3));
+				if (dCheck1 && timer1 < 2.0) {
+					timer1 = timer1 + deltaT;
+					ubo.model = glm::translate(glm::mat4(1.0), D1Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))
+						* glm::rotate(glm::mat4(1.0f), timer1 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, -3))
+						* glm::translate(glm::mat4(1.0), -D1Pos);
+				}
+				else if (dCheck1) {
+					ubo.model = glm::translate(glm::mat4(1.0), D1Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))
+						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, -3))
+						* glm::translate(glm::mat4(1.0), -D1Pos);
+				}
+				else {
+					ubo.model = glm::translate(glm::mat4(1.0), D1Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, 3))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, -3))
+						* glm::translate(glm::mat4(1.0), -D1Pos);
+				}	
 			}
 			if (i == 3) {
-				ubo.model = glm::translate(glm::mat4(1.0), D2Pos)*glm::translate(glm::mat4(1.0), glm::vec3(7, 0.0, 8))*
-					glm::rotate(glm::mat4(1.0), glm::radians(D2Rot.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D2Rot.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D2Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-7, 0.0, -8));
+				if (dCheck2 && timer2 < 2.0) {
+					timer2 = timer2 + deltaT;
+					ubo.model = glm::translate(glm::mat4(1.0), D2Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(7, 0.0, 8))
+						* glm::rotate(glm::mat4(1.0f), timer2 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-7, 0.0, -8))
+						* glm::translate(glm::mat4(1.0), -D2Pos);
+				}
+				else if (dCheck2) {
+					ubo.model = glm::translate(glm::mat4(1.0), D2Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(7, 0.0, 8))
+						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-7, 0.0, -8))
+						* glm::translate(glm::mat4(1.0), -D2Pos);
+				}
+				else {
+					ubo.model = glm::translate(glm::mat4(1.0), D2Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(7, 0.0, 8))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-7, 0.0, -8))
+						* glm::translate(glm::mat4(1.0), -D2Pos);
+				}
 			}
 			if (i == 4) {
-				ubo.model = glm::translate(glm::mat4(1.0), D3Pos)*glm::translate(glm::mat4(1.0), glm::vec3(9, 0.0, 3))*
-					glm::rotate(glm::mat4(1.0), glm::radians(D3Rot.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D3Rot.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D3Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-9, 0.0, -3));
+				if (dCheck3 && timer3 < 2.0) {
+					timer3 = timer3 + deltaT;
+					ubo.model = glm::translate(glm::mat4(1.0), D3Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(9.4, 0.0, 2.65))
+						* glm::rotate(glm::mat4(1.0f), timer3 * glm::radians(45.0f), glm::vec3(0.0f,1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-9.4, 0.0, -2.65))
+						* glm::translate(glm::mat4(1.0), -D3Pos);
+				}
+				else if (dCheck3) {
+					ubo.model = glm::translate(glm::mat4(1.0), D3Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(9.4, 0.0, 2.65))
+						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-9.4, 0.0, -2.65))
+						* glm::translate(glm::mat4(1.0), -D3Pos);
+				}
+				else {
+					ubo.model = glm::translate(glm::mat4(1.0), D3Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(9.4, 0.0, 2.65))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-9.4, 0.0, -2.65))
+						* glm::translate(glm::mat4(1.0), -D3Pos);
+				}
 			}
 			if (i == 5) {
-				ubo.model = glm::translate(glm::mat4(1.0), D4Pos)*glm::translate(glm::mat4(1.0), glm::vec3(12, 0.0, 4))*
-					glm::rotate(glm::mat4(1.0), glm::radians(D4Rot.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D4Rot.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D4Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-12, 0.0, -4));
+				if (dCheck4 && timer4 < 2.0) {
+					timer4 = timer4 + deltaT;
+					ubo.model = glm::translate(glm::mat4(1.0), D4Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(11.6, 0.0, 3.65))
+						* glm::rotate(glm::mat4(1.0f), timer4 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-11.6, 0.0, -3.65))
+						* glm::translate(glm::mat4(1.0), -D4Pos);
+				}
+				else if (dCheck4) {
+					ubo.model = glm::translate(glm::mat4(1.0), D4Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(11.6, 0.0, 3.65))
+						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-11.6, 0.0, -3.65))
+						* glm::translate(glm::mat4(1.0), -D4Pos);
+				}
+				else {
+					ubo.model = glm::translate(glm::mat4(1.0), D4Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(11.6, 0.0, 3.65))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-11.6, 0.0, -3.65))
+						* glm::translate(glm::mat4(1.0), -D4Pos);
+				}
 			}
 			if (i == 6) {
-				ubo.model = glm::translate(glm::mat4(1.0), D5Pos)*glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))*
-					glm::rotate(glm::mat4(1.0), glm::radians(D5Rot.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D5Rot.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0), glm::radians(D5Rot.z), glm::vec3(0, 0, 1))*glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2));
+				if (dCheck5 && timer5 < 2.0) {
+					timer5 = timer5 + deltaT;
+					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
+						* glm::rotate(glm::mat4(1.0f), timer4 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), -D5Pos);
+				}
+				else if (dCheck5) {
+					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
+						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), -D5Pos);
+				}
+				else {
+					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
+						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), -D5Pos);
+				}
 			}
 			if (i == 7) {
 				ubo.model = glm::translate(glm::mat4(1.0), L5Pos)*
@@ -670,6 +912,7 @@ protected:
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
 				}
 			}
+
 			if (i == 19) {
 				if (dCheck1) {
 					ubo.model = glm::translate(glm::mat4(1.0), glm::vec3(0, 1, 0));
@@ -703,34 +946,40 @@ protected:
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_K)) {
-			printf("LOOK: %f\n", lookPitch);
+			if (kCheck1) {
+				if (kCheck2)
+					printf("\nT  T\n");
+				else
+					printf("\nT  F\n");
+			}
+			else{
+				if (kCheck2)
+					printf("\nF  T\n");
+				else
+					printf("\nF  F\n");
+			}
+			printf("\nX: %f  Y: %f  Z: %f  L: %f\n", RobotPos.x, RobotPos.y, RobotPos.z, lookPitch);
 			if (RobotPos.x > 1.5 && RobotPos.x < 2.5 && 2 < RobotPos.z && RobotPos.z < 2.5 && (lookPitch > 240.0 && lookPitch < 300.0)) {
-				D1Pos = glm::vec3(-0.35, 0.0, 0.4);
-				D1Rot.y = 90.0f;
+				D1Pos = glm::vec3(0.0, 0.0, 0.4);
 				L1Pos = glm::vec3(2.5, 0.50, -2.2);
 				L1Rot.z = 90.0f;
 				dCheck1 = true;
 			}
-			if (RobotPos.x > 5.75 && RobotPos.x < 6.5 && 7.75 < RobotPos.z && RobotPos.z < 8.5 && kCheck1 == true && (lookPitch > 250.0 && lookPitch < 290.0)) {
+			if (RobotPos.x > 5.75 && RobotPos.x < 6.5 && 7.75 < RobotPos.z && RobotPos.z < 8.5 && kCheck1 && (lookPitch > 250.0 && lookPitch < 290.0)) {
 				dCheck2 = true;
-				D2Pos = glm::vec3(0.45, 0.0, 0.4);
-				D2Rot.y = -90.0f;
-
+				D2Pos = glm::vec3(0.0, 0.0, 0.4);
 			}
-			if (RobotPos.x > 8.0 && RobotPos.x < 8.5 && 4.00 < RobotPos.z && RobotPos.z < 4.75 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
-				D3Pos = glm::vec3(0.4, 0.0, -0.4);
-				D3Rot.y = -90.0f;
-				L3Rot.x = 0.0;
+			if (RobotPos.x > 8.0 && RobotPos.x < 8.75 && 4.00 < RobotPos.z && RobotPos.z < 4.75 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
+				D3Pos = glm::vec3(0.0, 0.0, 0.35);
+				L3Rot.x = 70.0;
 				dCheck3 = true;
 			}
-			if (RobotPos.x > 11.5 && RobotPos.x < 12.0 && 2.75 < RobotPos.z && RobotPos.z < 3.5 && kCheck2 == true && (lookPitch > 160.0 && lookPitch < 200.0)) {
-				D4Pos = glm::vec3(0.4, 0.0, 0.35);
-				D4Rot.y = -90.0f;
+			if (RobotPos.x > 11.5 && RobotPos.x < 12.25 && 2.75 < RobotPos.z && RobotPos.z < 3.5 && kCheck2 && (lookPitch > 160.0 && lookPitch < 200.0)) {
+				D4Pos = glm::vec3(0.0, 0.0, 0.35);
 				dCheck4 = true;
 			}
 			if (RobotPos.x > 3.0 && RobotPos.x < 3.5 && -1.00 < RobotPos.z && RobotPos.z < -0.25 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
-				D5Pos = glm::vec3(-0.4, 0.0, -0.35);
-				D5Rot.y = -90.0f;
+				D5Pos = glm::vec3(0.0, 0.0, -0.35);
 				L5Rot.x = 0.0;
 				dCheck5 = true;
 			}
