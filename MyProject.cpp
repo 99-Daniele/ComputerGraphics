@@ -21,7 +21,7 @@ struct element {
 };
 
 const std::vector<element> SceneToLoad = {
-	{"models/ceiling.obj", "textures/EOBRB01.png"},
+	{"models/ceiling.obj", "textures/EOBFLT12.png"},
 	{"models/doors.obj", "textures/EBBRD01.png"},
 	{"models/door1.obj","textures/EOBDR02.png"},
 	{"models/door2.obj","textures/EOBDR02.png"},
@@ -36,7 +36,7 @@ const std::vector<element> SceneToLoad = {
 	{"models/floor.obj","textures/EOBSLM04.png"},
 	{"models/goldKey.obj","textures/GoldKey.png"},
 	{"models/copperKey.obj","textures/CopperKey.png"},
-	{"models/walls.obj", "textures/EOBRB01.png"},
+	{"models/wall.obj", "textures/EOBRB01.png"},
 	{"models/winText.obj","textures/white.png"},
 	{"models/keyText.obj","textures/white.png"},
 	{"models/keyText1.obj","textures/white.png"},
@@ -49,34 +49,8 @@ const std::vector<element> SceneToLoad = {
 };
 
 
+std::string vettore[24][24];
 
-
-std::vector<std::vector<std::string>> vettore = {
-{"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"," "," ","*","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"," "," ","*","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*","*","*","*"," "," "," ","*","*"," "," ","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*","*","*","*"," ","*"," "," "," ","*"," ","*","*","*","*","*"},
-{"*","*","*","*","*","*"," ","*","*","*","*","*"," ","*","*"," "," ","*"," "," ","*","*","*","*"},
-{"*","*","*","*","*","*"," ","*","*","*"," "," "," "," "," ","*","*","*"," "," ","*","*","*","*"},
-{"*","*","*","*","*","*"," ","*","*","*"," ","*","*","*"," ","*"," ","*"," ","*","*","*","*","*"},
-{"*","*","*","*","*","*"," ","*","*"," "," ","*"," "," "," ","*"," ","*"," ","*","*","*","*","*"},
-{"*","*","*","*","*","*"," "," "," "," "," "," ","*"," "," ","*"," "," "," ","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*"," "," ","*","*"," ","*"," "," ","*"," ","*","*","*","*","*"},
-{"*","*","*","*","*","*"," "," "," ","*","*"," ","*"," ","*"," "," ","*"," ","*","*","*","*","*"},
-{"*","*","*","*"," "," "," "," "," "," "," "," "," "," ","*"," ","*"," "," "," ","*"," ","*","*"},
-{"*","*","*","*"," ","*"," "," "," ","*","*"," ","*","*"," "," ","*","*"," ","*"," "," "," ","*"},
-{"*","*","*","*"," ","*","*","*","*","*","*","*"," "," "," "," ","*"," "," "," ","*"," ","*","*"},
-{"*","*"," "," "," "," "," "," "," "," "," "," "," ","*","*"," ","*"," "," "," ","*"," ","*","*"},
-{"*","*"," ","*"," ","*","*","*","*","*","*","*","*","*","*"," "," ","*"," ","*"," "," ","*","*"},
-{"*","*"," ","*"," "," "," "," "," "," "," "," "," "," "," ","*"," "," "," "," "," ","*","*","*"},
-{"*","*"," ","*"," "," "," ","*","*","*"," "," "," ","*","*","*","*","*"," ","*","*","*","*","*"},
-{"*","*"," ","*","*","*","*","*"," ","*"," ","*","*"," "," "," "," "," "," ","*","*","*","*","*"},
-{"*"," "," "," ","*","*","*"," "," "," "," "," "," "," ","*","*","*","*","*","*","*","*","*","*"},
-{"*"," "," "," "," "," "," "," ","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"},
-{"*"," "," "," ","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"},
-{"*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"}
-};
 
 /*
 PROBLEMI DA RISOLVERE
@@ -235,12 +209,31 @@ protected:
 				});
 		}
 
-		FILE *f;
-		char vec[100];
-		f = fopen("models/map.txt","r");
-		while (fgets(vec, 100, f) != NULL)
+		int i = 0;
+		int k = 0;
+		int j = 0;
+		std::string str;
+		std::ifstream file("models/map.txt");
+		std::getline(file, str);
+		while (std::getline(file, str))
 		{
-			printf("%s ", vec);
+			while (str[i] != '}')
+			{
+				if (str[i] == ' ')
+				{
+					vettore[j][k] = " ";
+					k++;
+				}
+				if (str[i] == '*')
+				{
+					vettore[j][k] = "*";
+					k++;
+				}
+				i++;
+			}
+			i = 0;
+			j++;
+			k = 0;
 		}
 	}
 
@@ -285,13 +278,11 @@ protected:
 	}
 
 
-	void checkSide(glm::vec4 *blockLimit, glm::vec4 *recentlyWalls, glm::vec2 *matrixCoo, int direction) {
+	void checkSide(glm::vec4 *blockLimit, glm::vec4 *recentlyWalls, int *matrixCoo, int direction) {
 
-		//printf("\n\nBL1: %f  BL2: %f  BL3: %f  BL4: %f\nRW1: %f  RW2: %f  RW3: %f  RW4: %f\nMC1: %f  MC2: %f\nDIRECTION: %d\n\n", blockLimit[0], blockLimit[1], blockLimit[2], blockLimit[3], recentlyWalls[0], recentlyWalls[1], recentlyWalls[2], recentlyWalls[3], matrixCoo[0], matrixCoo[1], direction);
 
-		static glm::vec2 coo = *matrixCoo;
-		static glm::vec4 limit = *blockLimit;
-		static glm::vec4 recent = *recentlyWalls;
+		glm::vec4 limit = *blockLimit;
+		glm::vec4 recent = *recentlyWalls;
 		float value;
 		int column = 0;
 		int row = 0;
@@ -317,8 +308,8 @@ protected:
 				row = 1;
 			}
 		}
-
-		if (vettore[coo[1]+column][coo[0]+row] == "*")
+		//printf("\n limit 0 dentro la funzione %f ",blockLimit[0]);
+		if (vettore[matrixCoo[1] + column][matrixCoo[0] + row] == "*")
 		{
 			if (recent[direction] == 0)
 			{
@@ -340,6 +331,7 @@ protected:
 
 
 
+
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
 	void updateUniformBuffer(uint32_t currentImage) {
@@ -356,22 +348,18 @@ protected:
 
 		static float debounce = time;
 
-		std::ifstream map("models/map.txt", std::ios::ate | std::ios::binary);
-		if (!map.is_open()) {
-			throw std::runtime_error("failed to open file!");
-		}
 
 		// Updates unifoms for the objects
 		static glm::mat3 CamDir = glm::mat3(1.0f);
 		static glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
-		static glm::vec3 RobotPos = glm::vec3(1, 0, 3);
+		static glm::vec3 RobotPos = glm::vec3(4, 0, 1);
 		glm::vec3 RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
 		static float lookYaw = 0.0;
-		static float lookPitch = 270.0;
+		static float lookPitch = 0.0;
 		static float lookRoll = 0.0;
-		static glm::vec4 blockLimit = glm::vec4(1.5, 0.5, 3.5, 2.5);
+		static glm::vec4 blockLimit = glm::vec4(4.5, 3.5, 1.5, 0.5);
 		static glm::vec4 recentlyWalls = glm::vec4(0, 0, 0, 0);
-		static glm::vec2 matrixCoo = glm::vec2(7, 12);
+		static int matrixCoo[2] = { 10, 10 };//10,10
 		static glm::vec3 oldPos;
 
 		oldPos = RobotPos;
@@ -444,11 +432,12 @@ protected:
 			RobotPos = glm::vec3(1, 0, 3);
 			RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
 			lookYaw = 0.0;
-			lookPitch = 270.0;
+			lookPitch = 0.0;
 			lookRoll = 0.0;
 			blockLimit = glm::vec4(1.5, 0.5, 3.5, 2.5);
 			recentlyWalls = glm::vec4(0, 0, 0, 0);
-			matrixCoo = glm::vec2(7, 12);
+			matrixCoo[0] = 7;
+			matrixCoo[1] = 12;
 		}
 
 
@@ -492,43 +481,15 @@ protected:
 
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 2);
+				//printf("dopo la funzione %f ", blockLimit[0]);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 3);
 
-				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
-				{
-					//check if wall first time there, if yes then i can reduce it otherwise is already reduced(se ce muro già da prima mantengo il valore)
-					if (recentlyWalls[2] == 0)
-					{
-						blockLimit[2] = blockLimit[2] - 0.1;
-						recentlyWalls[2] = 1;
-					}
-				}
-				else {
-					// cerco che c'era un muro prima (prima c'era muro adesso no)
-					if (recentlyWalls[2] == 1)
-					{
-						blockLimit[2] = blockLimit[2] + 0.1;
-						recentlyWalls[2] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[3] == 0)
-					{
-						blockLimit[3] = blockLimit[3] + 0.1;
-						recentlyWalls[3] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[3] == 1)
-					{
-						blockLimit[3] = blockLimit[3] - 0.1;
-						recentlyWalls[3] = 0;
-					}
-
-				}
 
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
+				//printf("block limit 0 alla fine %f \n", blockLimit[0]);
+
 			}
 		}
 
@@ -548,55 +509,28 @@ protected:
 				//if yes and i have a wall same resut else plus 0.2
 				//in this case olny for block 2 and 3
 				printf("sto andando dietro ");
-
+				blockLimit[0] = blockLimit[1];
+				recentlyWalls[0] = 0;
 				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
 				{
-					blockLimit[0] = blockLimit[1];
 					blockLimit[1] = blockLimit[1] - 0.9;
 					recentlyWalls[1] = 1;
-					recentlyWalls[0] = 0;
 				}
 				else {
-					blockLimit[0] = blockLimit[1];
-					recentlyWalls[0] = 0;
+					
 					blockLimit[1] --;
 				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 2);
+				//printf("dopo la funzione %f ", blockLimit[0]);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 3);
 
-				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[2] == 0)
-					{
-						blockLimit[2] = blockLimit[2] - 0.1;
-						recentlyWalls[2] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[2] == 1)
-					{
-						blockLimit[2] = blockLimit[2] + 0.1;
-						recentlyWalls[2] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
-				{
-					if (recentlyWalls[3] == 0)
-					{
-						blockLimit[3] = blockLimit[3] + 0.1;
-						recentlyWalls[3] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[3] == 1)
-					{
-						blockLimit[3] = blockLimit[3] - 0.1;
-						recentlyWalls[3] = 0;
-					}
 
-				}
 				printf("%f ", blockLimit[3]);
 				printf("%f \n", blockLimit[2]);
+				//printf("block limit 0 alla fine %f \n", blockLimit[0]);
+
 			}
 		}
 
@@ -614,56 +548,22 @@ protected:
 			}
 			else {
 				printf("sto andando giu ");
-
+				blockLimit[3] = blockLimit[2];
+				recentlyWalls[3] = 0;
 				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
 				{
-					blockLimit[3] = blockLimit[2];
 					blockLimit[2] = blockLimit[2] + 0.9;
 					recentlyWalls[2] = 1;
-					recentlyWalls[3] = 0;
 
 				}
 				else {
-					blockLimit[3] = blockLimit[2];
-					recentlyWalls[3] = 0;
 					blockLimit[2] ++;
 				}
 
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 0);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 1);
 
-				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
-				{
-					if (recentlyWalls[0] == 0)
-					{
-						blockLimit[0] = blockLimit[0] - 0.1;
-						recentlyWalls[0] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[0] == 1)
-					{
-						blockLimit[0] = blockLimit[0] + 0.1000;
-						recentlyWalls[0] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
-				{
-					if (recentlyWalls[1] == 0)
-					{
-						//printf("prima del disastro %f ", blockLimit[1]);
-						//printf("dopo il disastro %f ", blockLimit[1]+0.1);
-						blockLimit[1] = blockLimit[1] + 0.1;
-						//printf("dopo il disastro 2 %f ", blockLimit[1]);
-						recentlyWalls[1] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[1] == 1)
-					{
-						blockLimit[1] = blockLimit[1] - 0.1;
-						recentlyWalls[1] = 0;
-					}
 
-				}
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
@@ -684,51 +584,21 @@ protected:
 			}
 			else {
 				printf("sto andando su ");
-
+				blockLimit[2] = blockLimit[3];
+				recentlyWalls[2] = 0;
 				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
 				{
-					blockLimit[2] = blockLimit[3];
 					blockLimit[3] = blockLimit[3] - 0.9;
 					recentlyWalls[3] = 1;
-					recentlyWalls[2] = 0;
 				}
 				else {
-					blockLimit[2] = blockLimit[3];
-					recentlyWalls[2] = 0;
 					blockLimit[3] --;
 				}
 
-				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
-				{
-					if (recentlyWalls[0] == 0)
-					{
-						blockLimit[0] = blockLimit[0] - 0.1;
-						recentlyWalls[0] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[0] == 1)
-					{
-						blockLimit[0] = blockLimit[0] + 0.1;
-						recentlyWalls[0] = 0;
-					}
-				}
-				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
-				{
-					if (recentlyWalls[1] == 0)
-					{
-						blockLimit[1] = blockLimit[1] + 0.1;
-						recentlyWalls[1] = 1;
-					}
-				}
-				else {
-					if (recentlyWalls[1] == 1)
-					{
-						blockLimit[1] = blockLimit[1] - 0.1;
-						recentlyWalls[1] = 0;
-					}
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 0);
+				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 1);
 
-				}
+
 				printf("%f ", blockLimit[1]);
 				printf("%f ", blockLimit[0]);
 				printf("%f ", blockLimit[3]);
