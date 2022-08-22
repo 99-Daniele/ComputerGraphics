@@ -38,14 +38,14 @@ const std::vector<element> SceneToLoad = {
 	{"models/copperKey.obj","textures/CopperKey.png"},
 	{"models/wall.obj", "textures/EOBRB01.png"},
 	{"models/winText.obj","textures/white.png"},
-	{"models/keyText.obj","textures/white.png"},
-	{"models/keyText1.obj","textures/white.png"},
+	{"models/goldenKeyText.obj","textures/white.png"},
+	{"models/silverKeyText.obj","textures/white.png"},
 	{"models/doorText1.obj","textures/white.png"},
-	{"models/doorText2.obj","textures/white.png"},
+	{"models/doorText5.obj","textures/white.png"},
 	{"models/doorText3.obj","textures/white.png"},
 	{"models/doorText4.obj","textures/white.png"},
-	{"models/doorText5.obj","textures/white.png"},
-
+	{"models/doorText2.obj","textures/white.png"},
+	{"models/restartText.obj","textures/white.png"}
 };
 
 
@@ -173,10 +173,14 @@ protected:
 	Texture TDoorText5;
 	DescriptorSet DSDoorText5;
 
+	Model MrestartText;
+	Texture TrestartText;
+	DescriptorSet DSrestartText;
 
-	std::vector<Model> ModelToLoad = { MCeiling,MDoors,MDoor1,MDoor2,MDoor3,MDoor4,MDoor5,MLever5,MLever3,MLever1,MGoldHole,MCopperHole,MFloor,MGoldKey,MCopperKey,MWalls,MWinText,MKeyText,MKeyText1,MDoorText1,MDoorText2,MDoorText3,MDoorText4,MDoorText5 };
-	std::vector<Texture> TextureToLoad = { TCeiling,TDoors,TDoor1,TDoor2,TDoor3,TDoor4,TDoor5,TLever5,TLever3,TLever1,TGoldHole,TCopperHole,TFloor,TGoldKey,TCopperKey,TWalls,TWinText,TKeyText,TKeyText1, TDoorText1,TDoorText2,TDoorText3,TDoorText4,TDoorText5 };
-	std::vector<DescriptorSet> DescriptorToLoad = { DSCeiling,DSDoors,DSDoor1,DSDoor2,DSDoor3,DSDoor4,DSDoor5,DSLever5,DSLever3,DSLever1,DSGoldHole,DSCopperHole,DSFloor,DSGoldKey,DSCopperKey,DSWalls,DSWinText,DSKeyText,DSKeyText1,DSDoorText1,DSDoorText2,DSDoorText3,DSDoorText4,DSDoorText5 };
+
+	std::vector<Model> ModelToLoad = { MCeiling,MDoors,MDoor1,MDoor2,MDoor3,MDoor4,MDoor5,MLever5,MLever3,MLever1,MGoldHole,MCopperHole,MFloor,MGoldKey,MCopperKey,MWalls,MWinText,MKeyText,MKeyText1,MDoorText1,MDoorText2,MDoorText3,MDoorText4,MDoorText5,MrestartText };
+	std::vector<Texture> TextureToLoad = { TCeiling,TDoors,TDoor1,TDoor2,TDoor3,TDoor4,TDoor5,TLever5,TLever3,TLever1,TGoldHole,TCopperHole,TFloor,TGoldKey,TCopperKey,TWalls,TWinText,TKeyText,TKeyText1, TDoorText1,TDoorText2,TDoorText3,TDoorText4,TDoorText5,TrestartText };
+	std::vector<DescriptorSet> DescriptorToLoad = { DSCeiling,DSDoors,DSDoor1,DSDoor2,DSDoor3,DSDoor4,DSDoor5,DSLever5,DSLever3,DSLever1,DSGoldHole,DSCopperHole,DSFloor,DSGoldKey,DSCopperKey,DSWalls,DSWinText,DSKeyText,DSKeyText1,DSDoorText1,DSDoorText2,DSDoorText3,DSDoorText4,DSDoorText5,DSrestartText };
 
 	// Here you set the main application parameters
 	void setWindowParameters() {
@@ -187,9 +191,9 @@ protected:
 		initialBackgroundColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 		// Descriptor pool sizes
-		uniformBlocksInPool = 24;
-		texturesInPool = 24;
-		setsInPool = 24;
+		uniformBlocksInPool = 25;
+		texturesInPool = 25;
+		setsInPool = 25;
 	}
 
 	void localInit() {
@@ -200,7 +204,7 @@ protected:
 
 		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSL1 });
 
-		for (int i = 0; i < 24; i++) {
+		for (int i = 0; i < 25; i++) {
 			ModelToLoad[i].init(this, SceneToLoad[i].ObjFile);
 			TextureToLoad[i].init(this, SceneToLoad[i].TextureFile);
 			DescriptorToLoad[i].init(this, &DSL1, {
@@ -239,7 +243,7 @@ protected:
 
 	// Here you destroy all the objects you created!		
 	void localCleanup() {
-		for (int i = 0; i < 24; i++) {
+		for (int i = 0; i < 25; i++) {
 			DescriptorToLoad[i].cleanup();
 			ModelToLoad[i].cleanup();
 			TextureToLoad[i].cleanup();
@@ -256,7 +260,7 @@ protected:
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.graphicsPipeline);
 
-		for (int i = 0; i < 24; i++) {
+		for (int i = 0; i < 25; i++) {
 			VkBuffer vertexBuffers[] = { ModelToLoad[i].vertexBuffer };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
@@ -350,6 +354,34 @@ protected:
 
 
 		// Updates unifoms for the objects
+		static bool dCheck1 = false;
+		static bool dCheck2 = false;
+		static bool dCheck3 = false;
+		static bool dCheck4 = false;
+		static bool dCheck5 = false;
+		static bool kCheck1 = false;
+		static bool kCheck2 = false;
+		static float timer1 = 0.0;
+		static float timer2 = 0.0;
+		static float timer3 = 0.0;
+		static float timer4 = 0.0;
+		static float timer5 = 0.0;
+
+		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D2Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D3Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D4Pos = glm::vec3(0.0, 0.0, 0.0);
+		static glm::vec3 D5Pos = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 L5Pos = glm::vec3(3.3, 0.5, -1.5);
+		static glm::vec3 L5Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 L3Pos = glm::vec3(8.3, 0.50, 3.5);
+		static glm::vec3 L3Rot = glm::vec3(0.0, 0.0, 0.0);
+
+		static glm::vec3 L1Pos = glm::vec3(0, 0, 0);
+		static glm::vec3 L1Rot = glm::vec3(0.0, 0.0, 0.0);
+
 		static glm::mat3 CamDir = glm::mat3(1.0f);
 		static glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
 		static glm::vec3 RobotPos = glm::vec3(4, 0, 1);
@@ -357,8 +389,8 @@ protected:
 		static float lookYaw = 0.0;
 		static float lookPitch = 0.0;
 		static float lookRoll = 0.0;
-		static glm::vec4 blockLimit = glm::vec4(4.5, 3.5, 1.5, 0.5);
-		static glm::vec4 recentlyWalls = glm::vec4(0, 0, 0, 0);
+		static glm::vec4 blockLimit = glm::vec4(4.4, 3.5, 1.4, 0.5);
+		static glm::vec4 recentlyWalls = glm::vec4(1, 0, 1, 0);
 		static int matrixCoo[2] = { 10, 10 };//10,10
 		static glm::vec3 oldPos;
 
@@ -425,34 +457,51 @@ protected:
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
+
+
 		//riporta alla posizione iniziale
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 			CamDir = glm::mat3(1.0f);
 			CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
-			RobotPos = glm::vec3(1, 0, 3);
+			RobotPos = glm::vec3(4, 0, 1);
 			RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
 			lookYaw = 0.0;
 			lookPitch = 0.0;
 			lookRoll = 0.0;
-			blockLimit = glm::vec4(1.5, 0.5, 3.5, 2.5);
-			recentlyWalls = glm::vec4(0, 0, 0, 0);
-			matrixCoo[0] = 7;
-			matrixCoo[1] = 12;
+			blockLimit = glm::vec4(4.4, 3.5, 1.4, 0.5);
+			recentlyWalls = glm::vec4(1, 0, 1, 0);
+			matrixCoo[0] = 10;
+			matrixCoo[1] = 10;
+			D1Pos = glm::vec3(0.0, 0.0, 0.0);
+			D2Pos = glm::vec3(0.0, 0.0, 0.0);
+			D3Pos = glm::vec3(0.0, 0.0, 0.0);
+			D4Pos = glm::vec3(0.0, 0.0, 0.0);
+			D5Pos = glm::vec3(0.0, 0.0, 0.0);
+
+			L5Pos = glm::vec3(3.3, 0.5, -1.5);
+			L5Rot = glm::vec3(0.0, 0.0, 0.0);
+
+			L3Pos = glm::vec3(8.3, 0.50, 3.5);
+			L3Rot = glm::vec3(0.0, 0.0, 0.0);
+
+			L1Pos = glm::vec3(0, 0, 0);
+			L1Rot = glm::vec3(0.0, 0.0, 0.0);
+			dCheck1 = false;
+			dCheck2 = false;
+			dCheck3 = false;
+			dCheck4 = false;
+			dCheck5 = false;
+			kCheck1 = false;
+			kCheck2 = false;
+			timer1 = 0.0;
+			timer2 = 0.0;
+			timer3 = 0.0;
+			timer4 = 0.0;
+			timer5 = 0.0;
 		}
 
 
-		static bool dCheck1 = false;
-		static bool dCheck2 = false;
-		static bool dCheck3 = false;
-		static bool dCheck4 = false;
-		static bool dCheck5 = false;
-		static bool kCheck1 = false;
-		static bool kCheck2 = false;
-		static float timer1 = 0.0;
-		static float timer2 = 0.0;
-		static float timer3 = 0.0;
-		static float timer4 = 0.0;
-		static float timer5 = 0.0;
+
 
 		if (blockLimit[0] < RobotPos[0])
 		{
@@ -498,7 +547,7 @@ protected:
 		{
 
 			matrixCoo[0]--;
-			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false)
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[1] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false)
 			{
 				RobotPos = oldPos;
 				matrixCoo[0]++;
@@ -619,25 +668,10 @@ protected:
 		ubo.proj[1][1] *= -1;
 
 		void* data;
-		static int var1 = 0;
 
-		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D2Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D3Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D4Pos = glm::vec3(0.0, 0.0, 0.0);
-		static glm::vec3 D5Pos = glm::vec3(0.0, 0.0, 0.0);
-
-		static glm::vec3 L5Pos = glm::vec3(3.3, 0.5, -1.5);
-		static glm::vec3 L5Rot = glm::vec3(70.0, 0.0, 0.0);
-
-		static glm::vec3 L3Pos = glm::vec3(8.3, 0.50, 3.5);
-		static glm::vec3 L3Rot = glm::vec3(0.0, 0.0, 0.0);
-
-		static glm::vec3 L1Pos = glm::vec3(0, 0, 0);
-		static glm::vec3 L1Rot = glm::vec3(0.0, 0.0, 0.0);
 
 		// Here is where you actually update your uniforms
-		for (int i = 0; i < 24; i++) {
+		for (int i = 0; i < 25; i++) {
 			ubo.model = glm::mat4(1);
 			if (i == 2) {
 				if (dCheck1 && timer1 < 2.0) {
@@ -850,7 +884,7 @@ protected:
 			}
 			if (RobotPos.x > 3.0 && RobotPos.x < 3.5 && -1.00 < RobotPos.z && RobotPos.z < -0.25 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
 				D5Pos = glm::vec3(0.0, 0.0, -0.35);
-				L5Rot.x = 0.0;
+				L5Rot.x = 70.0;
 				dCheck5 = true;
 			}
 		}
