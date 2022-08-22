@@ -1354,6 +1354,9 @@ protected:
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
             drawFrame();
+			if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+				break;
+			}
         }
         
         vkDeviceWaitIdle(device);
