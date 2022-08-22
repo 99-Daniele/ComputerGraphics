@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{54092435-C9A0-432C-8A5F-609C231D880F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,14 +76,14 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -93,7 +93,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -102,27 +102,27 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>"C:\Users\danie\source\repos\CG-Dungeon\headers";C:\Users\danie\Documents\Visual Studio 2022\Libraries\glfw-3.3.6.bin.WIN64\include;C:\Users\danie\Documents\Visual Studio 2022\Libraries\glm;C:\VulkanSDK\1.3.204.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"C:\Users\danie\Documents\Visual Studio 2022\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2022";"C:\VulkanSDK\1.3.204.0\Lib";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinyobjloader-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\stb-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\tinygltf-master;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glm-0.9.9.8;C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\include;C:\VulkanSDK\1.3.204.1\Include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>"C:\Users\danie\source\repos\CG-Dungeon\headers";C:\Users\danie\Documents\Visual Studio 2022\Libraries\glfw-3.3.6.bin.WIN64\include;C:\Users\danie\Documents\Visual Studio 2022\Libraries\glm;C:\VulkanSDK\1.3.204.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\mattc\OneDrive\Documenti\Visual Studio 2017\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2015;C:\VulkanSDK\1.3.204.1\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"C:\Users\danie\Documents\Visual Studio 2022\Libraries\glfw-3.3.6.bin.WIN64\lib-vc2022";"C:\VulkanSDK\1.3.204.0\Lib";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

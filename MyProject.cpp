@@ -5,9 +5,6 @@
 #include <string>
 #include <iostream>
 
-
-
-
 // The uniform buffer object used in this example
 struct UniformBufferObject {
 	alignas(16) glm::mat4 model;
@@ -48,9 +45,7 @@ const std::vector<element> SceneToLoad = {
 	{"models/restartText.obj","textures/white.png"}
 };
 
-
 std::string vettore[24][24];
-
 
 /*
 PROBLEMI DA RISOLVERE
@@ -62,15 +57,8 @@ POTREI TOGLIERE MODELS DEI DIVERSI TESTI
 NON HO CAPITO BENE QUALE SEI L'INIZIO E SE CE UN BLOCCO CHE IN REALTA NON E' MURO
 */
 
-
-
-// MAIN ! 
 class MyProject : public BaseProject {
 protected:
-	// Here you list all the Vulkan objects you need:
-
-
-	// Descriptor Layouts [what will be passed to the shaders]
 	DescriptorSetLayout DSL1;
 
 	// Pipelines [Shader couples]
@@ -185,7 +173,7 @@ protected:
 	// Here you set the main application parameters
 	void setWindowParameters() {
 		// window size, titile and initial background
-		windowWidth = 800;
+		windowWidth = 1600;
 		windowHeight = 800;
 		windowTitle = "My Project";
 		initialBackgroundColor = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -584,20 +572,10 @@ protected:
 			recentlyWalls = glm::vec4(1, 0, 1, 0);
 			matrixCoo[0] = 10;
 			matrixCoo[1] = 10;
-			D1Pos = glm::vec3(0.0, 0.0, 0.0);
-			D2Pos = glm::vec3(0.0, 0.0, 0.0);
-			D3Pos = glm::vec3(0.0, 0.0, 0.0);
-			D4Pos = glm::vec3(0.0, 0.0, 0.0);
-			D5Pos = glm::vec3(0.0, 0.0, 0.0);
+		}
 
-			L5Pos = glm::vec3(3.3, 0.5, -1.5);
-			L5Rot = glm::vec3(0.0, 0.0, 0.0);
-
-			L3Pos = glm::vec3(8.3, 0.50, 3.5);
-			L3Rot = glm::vec3(0.0, 0.0, 0.0);
-
-			L1Pos = glm::vec3(0, 0, 0);
-			L1Rot = glm::vec3(0.0, 0.0, 0.0);
+		//ricomincia da capo il gioco
+		if (glfwGetKey(window, GLFW_KEY_R)) {
 			dCheck1 = false;
 			dCheck2 = false;
 			dCheck3 = false;
@@ -610,7 +588,33 @@ protected:
 			timer3 = 0.0;
 			timer4 = 0.0;
 			timer5 = 0.0;
+			D1Pos = glm::vec3(0.0, 0.0, 0.0);
+			D2Pos = glm::vec3(0.0, 0.0, 0.0);
+			D3Pos = glm::vec3(0.0, 0.0, 0.0);
+			D4Pos = glm::vec3(0.0, 0.0, 0.0);
+			D5Pos = glm::vec3(0.0, 0.0, 0.0);
+			L5Pos = glm::vec3(3.3, 0.5, -1.5);
+			L5Rot = glm::vec3(0.0, 0.0, 0.0);
+			L3Pos = glm::vec3(8.3, 0.50, 3.5);
+			L3Rot = glm::vec3(0.0, 0.0, 0.0);
+			L1Pos = glm::vec3(0, 0, 0);
+			L1Rot = glm::vec3(0.0, 0.0, 0.0);
+			CamDir = glm::mat3(1.0f);
+			CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
+			RobotPos = glm::vec3(4, 0, 1);
+			RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
+			lookYaw = 0.0;
+			lookPitch = 0.0;
+			lookRoll = 0.0;
+			blockLimit = glm::vec4(4.4, 3.5, 1.4, 0.5);
+			recentlyWalls = glm::vec4(1, 0, 1, 0);
+			matrixCoo[0] = 10;
+			matrixCoo[1] = 10;
 		}
+
+		//esci dal gioco
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+			exit(1);
 
 
 
@@ -883,22 +887,22 @@ protected:
 				if (dCheck5 && timer5 < 2.0) {
 					timer5 = timer5 + deltaT;
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
-						* glm::rotate(glm::mat4(1.0f), timer4 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
+						* glm::rotate(glm::mat4(1.0f), timer5 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 				else if (dCheck5) {
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
 						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 				else {
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 			}
@@ -977,27 +981,27 @@ protected:
 					printf("\nF  F\n");
 			}
 			printf("\nX: %f  Y: %f  Z: %f  L: %f\n", RobotPos.x, RobotPos.y, RobotPos.z, lookPitch);
-			if (RobotPos.x > 1.5 && RobotPos.x < 2.5 && 2 < RobotPos.z && RobotPos.z < 2.5 && (lookPitch > 240.0 && lookPitch < 300.0)) {
+			if (RobotPos.x >= 1.5 && RobotPos.x <= 2.5 && 2 <= RobotPos.z && RobotPos.z <= 2.5 && (lookPitch >= 240.0 && lookPitch <= 300.0)) {
 				D1Pos = glm::vec3(0.0, 0.0, 0.4);
 				L1Pos = glm::vec3(2.5, 0.50, -2.2);
 				L1Rot.z = 90.0f;
 				dCheck1 = true;
 			}
-			if (RobotPos.x > 5.75 && RobotPos.x < 6.5 && 7.75 < RobotPos.z && RobotPos.z < 8.5 && kCheck1 && (lookPitch > 250.0 && lookPitch < 290.0)) {
+			if (RobotPos.x >= 5.75 && RobotPos.x <= 6.5 && 7.75 <= RobotPos.z && RobotPos.z <= 8.5 && kCheck1 && (lookPitch >= 250.0 && lookPitch <= 290.0)) {
 				dCheck2 = true;
 				D2Pos = glm::vec3(0.0, 0.0, 0.4);
 			}
-			if (RobotPos.x > 8.0 && RobotPos.x < 8.75 && 4.00 < RobotPos.z && RobotPos.z < 4.75 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
+			if (RobotPos.x >= 8.0 && RobotPos.x <= 8.75 && 4.00 <= RobotPos.z && RobotPos.z <= 4.75 && ((lookPitch >= 340.0 && lookPitch <= 360.0) || (lookPitch >= 0.0 && lookPitch <= 20.0))) {
 				D3Pos = glm::vec3(0.0, 0.0, 0.35);
 				L3Rot.x = 70.0;
 				dCheck3 = true;
 			}
-			if (RobotPos.x > 11.5 && RobotPos.x < 12.25 && 2.75 < RobotPos.z && RobotPos.z < 3.5 && kCheck2 && (lookPitch > 160.0 && lookPitch < 200.0)) {
+			if (RobotPos.x >= 11.5 && RobotPos.x <= 12.25 && 2.75 <= RobotPos.z && RobotPos.z <= 3.5 && kCheck2 && (lookPitch >= 160.0 && lookPitch <= 200.0)) {
 				D4Pos = glm::vec3(0.0, 0.0, 0.35);
 				dCheck4 = true;
 			}
-			if (RobotPos.x > 3.0 && RobotPos.x < 3.5 && -1.00 < RobotPos.z && RobotPos.z < -0.25 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
-				D5Pos = glm::vec3(0.0, 0.0, -0.35);
+			if (RobotPos.x >= 3.0 && RobotPos.x <= 3.5 && -1.00 <= RobotPos.z && RobotPos.z <= -0.25 && ((lookPitch >= 340.0 && lookPitch <= 360.0) || (lookPitch >= 0.0 && lookPitch <= 20.0))) {
+				D5Pos = glm::vec3(0.0, 0.0, 0.35);
 				L5Rot.x = 70.0;
 				dCheck5 = true;
 			}
