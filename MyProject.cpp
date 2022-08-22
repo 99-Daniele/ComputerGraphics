@@ -444,18 +444,130 @@ protected:
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
 		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
 		}
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
 		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
+			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
+				//printf("ce uno spigolo ");
+				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
+				{
+					RobotPos = oldPos;
+				}
+			}
 		}
 
 
@@ -654,6 +766,8 @@ protected:
 				printf("%f \n", blockLimit[2]);
 			}
 		}
+
+
 
 
 		static glm::mat4 CamMat = glm::translate(glm::transpose(glm::mat4(CamDir)), -CamPos);
