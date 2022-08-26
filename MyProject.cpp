@@ -1,14 +1,8 @@
-// This has been adapted from the Vulkan tutorial
-
 #include "MyProject.hpp"
 #include <vector>
 #include <string>
 #include <iostream>
 
-
-
-
-// The uniform buffer object used in this example
 struct UniformBufferObject {
 	alignas(16) glm::mat4 model;
 	alignas(16) glm::mat4 view;
@@ -48,35 +42,14 @@ const std::vector<element> SceneToLoad = {
 	{"models/restartText.obj","textures/white.png"}
 };
 
-
 std::string vettore[24][24];
 
-
-/*
-PROBLEMI DA RISOLVERE
- 
-NON RIESCO A IMPORTARE IL FILE MAP.TXT E FARE OPERAZIONI SU DI ESSA
-NON HO FATTO I SHADER
-POTREI TOGLIERE DEI TEXTURES 
-POTREI TOGLIERE MODELS DEI DIVERSI TESTI
-NON HO CAPITO BENE QUALE SEI L'INIZIO E SE CE UN BLOCCO CHE IN REALTA NON E' MURO
-*/
-
-
-
-// MAIN ! 
 class MyProject : public BaseProject {
 protected:
-	// Here you list all the Vulkan objects you need:
-
-
-	// Descriptor Layouts [what will be passed to the shaders]
 	DescriptorSetLayout DSL1;
 
-	// Pipelines [Shader couples]
 	Pipeline P1;
 
-	// Models, textures and Descriptors (values assigned to the uniforms)
 	Model MCeiling;
 	Texture TCeiling;
 	DescriptorSet DSCeiling;
@@ -182,15 +155,13 @@ protected:
 	std::vector<Texture> TextureToLoad = { TCeiling,TDoors,TDoor1,TDoor2,TDoor3,TDoor4,TDoor5,TLever5,TLever3,TLever1,TGoldHole,TCopperHole,TFloor,TGoldKey,TCopperKey,TWalls,TWinText,TKeyText,TKeyText1, TDoorText1,TDoorText2,TDoorText3,TDoorText4,TDoorText5,TrestartText };
 	std::vector<DescriptorSet> DescriptorToLoad = { DSCeiling,DSDoors,DSDoor1,DSDoor2,DSDoor3,DSDoor4,DSDoor5,DSLever5,DSLever3,DSLever1,DSGoldHole,DSCopperHole,DSFloor,DSGoldKey,DSCopperKey,DSWalls,DSWinText,DSKeyText,DSKeyText1,DSDoorText1,DSDoorText2,DSDoorText3,DSDoorText4,DSDoorText5,DSrestartText };
 
-	// Here you set the main application parameters
 	void setWindowParameters() {
-		// window size, titile and initial background
-		windowWidth = 800;
+
+		windowWidth = 1600;
 		windowHeight = 800;
 		windowTitle = "My Project";
 		initialBackgroundColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		// Descriptor pool sizes
 		uniformBlocksInPool = 25;
 		texturesInPool = 25;
 		setsInPool = 25;
@@ -240,8 +211,7 @@ protected:
 			k = 0;
 		}
 	}
-
-	// Here you destroy all the objects you created!		
+		
 	void localCleanup() {
 		for (int i = 0; i < 25; i++) {
 			DescriptorToLoad[i].cleanup();
@@ -252,9 +222,6 @@ protected:
 		DSL1.cleanup();
 	}
 
-	// Here it is the creation of the command buffer:
-	// You send to the GPU all the objects you want to draw,
-	// with their buffers and textures
 	void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -281,9 +248,7 @@ protected:
 		return out;
 	}
 
-
 	void checkSide(glm::vec4 *blockLimit, glm::vec4 *recentlyWalls, int *matrixCoo, int direction) {
-
 
 		glm::vec4 limit = *blockLimit;
 		glm::vec4 recent = *recentlyWalls;
@@ -291,53 +256,43 @@ protected:
 		int column = 0;
 		int row = 0;
 
-		if (direction == 3 || direction == 1)
-		{
-			value = 0.1;
-			if (direction == 3)
-			{
-				column = -1;
-			}
-			else {
-				row = -1;
-			}
-		}
-		else {
-			value = -0.1;
-			if (direction == 2)
-			{
-				column = 1;
-			}
-			else {
+		switch (direction) {
+			case 0:
+				value = -0.1;
 				row = 1;
-			}
+				break;
+			case 1:
+				value = 0.1;
+				row = -1;
+				break;
+			case 2:
+				value = -0.1;
+				column = 1;
+				break;
+			case 3:
+				value = 0.1;
+				column = -1;
+				break;
 		}
-		//printf("\n limit 0 dentro la funzione %f ",blockLimit[0]);
-		if (vettore[matrixCoo[1] + column][matrixCoo[0] + row] == "*")
-		{
-			if (recent[direction] == 0)
-			{
+
+		if (vettore[matrixCoo[1] + column][matrixCoo[0] + row] == "*"){
+			if (recent[direction] == 0){
 				limit[direction] = limit[direction] + value;
 				recent[direction] = 1;
 			}
 		}
+
 		else {
-			if (recent[direction] == 1)
-			{
-				printf("aumento di 0.2 su ");
+			if (recent[direction] == 1){
 				limit[direction] = limit[direction] - value;
 				recent[direction] = 0;
 			}
 		}
+
 		*recentlyWalls = recent;
 		*blockLimit = limit;
 	}
 
-
-
-
-	// Here is where you update the uniforms.
-	// Very likely this will be where you will be writing the logic of your application.
 	void updateUniformBuffer(uint32_t currentImage) {
 		static auto startTime = std::chrono::high_resolution_clock::now();
 		static float lastTime = 0.0f;
@@ -352,8 +307,9 @@ protected:
 
 		static float debounce = time;
 
-
-		// Updates unifoms for the objects
+		//dCheck is true if door is open
+		//kCheck is true if key is taken
+		//timer is the timer to open each door 
 		static bool dCheck1 = false;
 		static bool dCheck2 = false;
 		static bool dCheck3 = false;
@@ -367,6 +323,7 @@ protected:
 		static float timer4 = 0.0;
 		static float timer5 = 0.0;
 
+		//positions of doors and levers
 		static glm::vec3 D1Pos = glm::vec3(0.0, 0.0, 0.0);
 		static glm::vec3 D2Pos = glm::vec3(0.0, 0.0, 0.0);
 		static glm::vec3 D3Pos = glm::vec3(0.0, 0.0, 0.0);
@@ -382,6 +339,7 @@ protected:
 		static glm::vec3 L1Pos = glm::vec3(0, 0, 0);
 		static glm::vec3 L1Rot = glm::vec3(0.0, 0.0, 0.0);
 
+		//camera parameters
 		static glm::mat3 CamDir = glm::mat3(1.0f);
 		static glm::vec3 CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
 		static glm::vec3 RobotPos = glm::vec3(4, 0, 1);
@@ -389,13 +347,17 @@ protected:
 		static float lookYaw = 0.0;
 		static float lookPitch = 0.0;
 		static float lookRoll = 0.0;
+
+		//blockLimit reminds how much player is far from wall in each direction
+		//recentlyWalls summarize if player is near one wall
+		//matrixCoo is player current block on map
 		static glm::vec4 blockLimit = glm::vec4(4.4, 3.5, 1.4, 0.5);
 		static glm::vec4 recentlyWalls = glm::vec4(1, 0, 1, 0);
 		static int matrixCoo[2] = { 10, 10 };//10,10
+
 		static glm::vec3 oldPos;
 
 		oldPos = RobotPos;
-
 
 		UniformBufferObject ubo{};
 
@@ -406,6 +368,7 @@ protected:
 			else if (lookPitch > 360.0)
 				lookPitch -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
 			lookPitch -= deltaT * ROT_SPEED;
 			if (lookPitch < 0.0)
@@ -413,6 +376,7 @@ protected:
 			else if (lookPitch > 360.0)
 				lookPitch -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_UP)) {
 			lookYaw += deltaT * ROT_SPEED;
 			if (lookYaw < 0.0)
@@ -420,6 +384,7 @@ protected:
 			else if (lookYaw > 360.0)
 				lookYaw -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
 			lookYaw -= deltaT * ROT_SPEED;
 			if (lookYaw < 0.0)
@@ -427,6 +392,7 @@ protected:
 			else if (lookYaw > 360.0)
 				lookYaw -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_Q)) {
 			lookRoll -= deltaT * ROT_SPEED;
 			if (lookRoll < 0.0)
@@ -434,6 +400,7 @@ protected:
 			else if (lookRoll > 360.0)
 				lookRoll -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_E)) {
 			lookRoll += deltaT * ROT_SPEED;
 			if (lookRoll < 0.0)
@@ -441,137 +408,108 @@ protected:
 			else if (lookRoll > 360.0)
 				lookRoll -= 360.0;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			RobotPos -= MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			RobotPos += MOVE_SPEED * glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(lookPitch),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] - 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] - 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] < blockLimit[3] + 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] + 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] + 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] > blockLimit[0] - 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 			if (vettore[matrixCoo[1] + 1][matrixCoo[0] - 1] == "*" && vettore[matrixCoo[1]][matrixCoo[0] - 1] == " " &&  vettore[matrixCoo[1] + 1][matrixCoo[0]] == " ") {
-				//printf("ce uno spigolo ");
+				//evaluates if there is a corner
 				if (RobotPos[0] < blockLimit[1] + 0.1 && RobotPos[2] > blockLimit[2] - 0.1)
-				{
 					RobotPos = oldPos;
-				}
 			}
 		}
 
-
-		//riporta alla posizione iniziale
+		//move to initial position
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 			CamDir = glm::mat3(1.0f);
 			CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
@@ -584,20 +522,10 @@ protected:
 			recentlyWalls = glm::vec4(1, 0, 1, 0);
 			matrixCoo[0] = 10;
 			matrixCoo[1] = 10;
-			D1Pos = glm::vec3(0.0, 0.0, 0.0);
-			D2Pos = glm::vec3(0.0, 0.0, 0.0);
-			D3Pos = glm::vec3(0.0, 0.0, 0.0);
-			D4Pos = glm::vec3(0.0, 0.0, 0.0);
-			D5Pos = glm::vec3(0.0, 0.0, 0.0);
+		}
 
-			L5Pos = glm::vec3(3.3, 0.5, -1.5);
-			L5Rot = glm::vec3(0.0, 0.0, 0.0);
-
-			L3Pos = glm::vec3(8.3, 0.50, 3.5);
-			L3Rot = glm::vec3(0.0, 0.0, 0.0);
-
-			L1Pos = glm::vec3(0, 0, 0);
-			L1Rot = glm::vec3(0.0, 0.0, 0.0);
+		//restart game
+		if (glfwGetKey(window, GLFW_KEY_R)) {
 			dCheck1 = false;
 			dCheck2 = false;
 			dCheck3 = false;
@@ -610,28 +538,47 @@ protected:
 			timer3 = 0.0;
 			timer4 = 0.0;
 			timer5 = 0.0;
+			D1Pos = glm::vec3(0.0, 0.0, 0.0);
+			D2Pos = glm::vec3(0.0, 0.0, 0.0);
+			D3Pos = glm::vec3(0.0, 0.0, 0.0);
+			D4Pos = glm::vec3(0.0, 0.0, 0.0);
+			D5Pos = glm::vec3(0.0, 0.0, 0.0);
+			L5Pos = glm::vec3(3.3, 0.5, -1.5);
+			L5Rot = glm::vec3(0.0, 0.0, 0.0);
+			L3Pos = glm::vec3(8.3, 0.50, 3.5);
+			L3Rot = glm::vec3(0.0, 0.0, 0.0);
+			L1Pos = glm::vec3(0, 0, 0);
+			L1Rot = glm::vec3(0.0, 0.0, 0.0);
+			CamDir = glm::mat3(1.0f);
+			CamPos = glm::vec3(0.0f, 0.5f, 2.5f);
+			RobotPos = glm::vec3(4, 0, 1);
+			RobotCamDeltaPos = glm::vec3(0.0f, 0.335f, -0.0f);
+			lookYaw = 0.0;
+			lookPitch = 0.0;
+			lookRoll = 0.0;
+			blockLimit = glm::vec4(4.4, 3.5, 1.4, 0.5);
+			recentlyWalls = glm::vec4(1, 0, 1, 0);
+			matrixCoo[0] = 10;
+			matrixCoo[1] = 10;
 		}
 
+		//exit game
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+			exit(1);
 
-
-
-		if (blockLimit[0] < RobotPos[0])
-		{
+		//code in case player has changed block of map going nord
+		if (blockLimit[0] < RobotPos[0]){
 			matrixCoo[0]++;
 
-			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 3.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false || blockLimit[0] == 6.5 && RobotPos.z <= 8.5 && RobotPos.z >= 7.6 && dCheck2 == false)
-			{
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[0] == 3.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false || blockLimit[0] == 6.5 && RobotPos.z <= 8.5 && RobotPos.z >= 7.6 && dCheck2 == false){
 				RobotPos = oldPos;
 				matrixCoo[0]--;
 			}
 			else {
-				printf("sto andando avanti ");
 				blockLimit[1] = blockLimit[0];
 				recentlyWalls[1] = 0;
-
-				//controllo cosa fare se aventi ce muro
-				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*")
-				{
+				//evaluates if there is a wall
+				if (vettore[matrixCoo[1]][matrixCoo[0] + 1] == "*"){
 					blockLimit[0] = blockLimit[0] + 0.9;
 					recentlyWalls[0] = 1;
 				}
@@ -639,28 +586,16 @@ protected:
 					//l'if forse si può togliere considera blocco di dimensione minore di 1, considera caso muro dietro pero adesso vado al blocco davanti
 					blockLimit[0]++;
 				}
-
-				printf("%f ", blockLimit[1]);
-				printf("%f ", blockLimit[0]);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 2);
-				//printf("dopo la funzione %f ", blockLimit[0]);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 3);
-
-
-				printf("%f ", blockLimit[3]);
-				printf("%f \n", blockLimit[2]);
-				//printf("block limit 0 alla fine %f \n", blockLimit[0]);
-
 			}
 		}
 
-
-		if (blockLimit[1] > RobotPos[0])
-		{
+		//code in case player has changed block of map going sud
+		if (blockLimit[1] > RobotPos[0]){
 
 			matrixCoo[0]--;
-			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[1] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false)
-			{
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[1] == 4.5 && RobotPos.z <= 3.4 && RobotPos.z >= 2.6 && dCheck1 == false){
 				RobotPos = oldPos;
 				matrixCoo[0]++;
 			}
@@ -669,11 +604,9 @@ protected:
 				//if no and i have a wall minus 0.2 else same result
 				//if yes and i have a wall same resut else plus 0.2
 				//in this case olny for block 2 and 3
-				printf("sto andando dietro ");
 				blockLimit[0] = blockLimit[1];
 				recentlyWalls[0] = 0;
-				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*")
-				{
+				if (vettore[matrixCoo[1]][matrixCoo[0] - 1] == "*"){
 					blockLimit[1] = blockLimit[1] - 0.9;
 					recentlyWalls[1] = 1;
 				}
@@ -681,38 +614,23 @@ protected:
 					
 					blockLimit[1] --;
 				}
-				printf("%f ", blockLimit[1]);
-				printf("%f ", blockLimit[0]);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 2);
-				//printf("dopo la funzione %f ", blockLimit[0]);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 3);
-
-
-				printf("%f ", blockLimit[3]);
-				printf("%f \n", blockLimit[2]);
-				//printf("block limit 0 alla fine %f \n", blockLimit[0]);
-
 			}
 		}
 
-
-
-		//verso giu
-		if (blockLimit[2] < RobotPos[2])
-		{
+		//code in case player has changed block of map going ovest
+		if (blockLimit[2] < RobotPos[2]){
 
 			matrixCoo[1]++;
-			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[2] == -2.5 && RobotPos.x <= 4.5 && RobotPos.x >= 3.6 && dCheck5 == false || blockLimit[2] == 2.5 && RobotPos.x <= 9.5 && RobotPos.x >= 8.6 && dCheck3 == false || blockLimit[2] == 3.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
-			{
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[2] == -2.5 && RobotPos.x <= 4.5 && RobotPos.x >= 3.6 && dCheck5 == false || blockLimit[2] == 2.5 && RobotPos.x <= 9.5 && RobotPos.x >= 8.6 && dCheck3 == false || blockLimit[2] == 3.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false){
 				RobotPos = oldPos;
 				matrixCoo[1]--;
 			}
 			else {
-				printf("sto andando giu ");
 				blockLimit[3] = blockLimit[2];
 				recentlyWalls[3] = 0;
-				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*")
-				{
+				if (vettore[matrixCoo[1] + 1][matrixCoo[0]] == "*"){
 					blockLimit[2] = blockLimit[2] + 0.9;
 					recentlyWalls[2] = 1;
 
@@ -720,35 +638,23 @@ protected:
 				else {
 					blockLimit[2] ++;
 				}
-
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 0);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 1);
-
-
-				printf("%f ", blockLimit[1]);
-				printf("%f ", blockLimit[0]);
-				printf("%f ", blockLimit[3]);
-				printf("%f \n", blockLimit[2]);
 			}
 		}
 
-
-		//verso su
-		if (blockLimit[3] > RobotPos[2])
-		{
+		//code in case player has changed block of map going est
+		if (blockLimit[3] > RobotPos[2]){
 
 			matrixCoo[1]--;
-			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[3] == -1.5 && RobotPos.x <= 4.4 && RobotPos.x >= 3.5 && dCheck5 == false || blockLimit[3] == 3.5 && RobotPos.x <= 9.4 && RobotPos.x >= 8.5 && dCheck3 == false || blockLimit[3] == 4.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false)
-			{
+			if (vettore[matrixCoo[1]][matrixCoo[0]] == "*" || blockLimit[3] == -1.5 && RobotPos.x <= 4.4 && RobotPos.x >= 3.5 && dCheck5 == false || blockLimit[3] == 3.5 && RobotPos.x <= 9.4 && RobotPos.x >= 8.5 && dCheck3 == false || blockLimit[3] == 4.5 && RobotPos.x <= 12.5 && RobotPos.x >= 11.5 && dCheck4 == false){
 				RobotPos = oldPos;
 				matrixCoo[1]++;
 			}
 			else {
-				printf("sto andando su ");
 				blockLimit[2] = blockLimit[3];
 				recentlyWalls[2] = 0;
-				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*")
-				{
+				if (vettore[matrixCoo[1] - 1][matrixCoo[0]] == "*"){
 					blockLimit[3] = blockLimit[3] - 0.9;
 					recentlyWalls[3] = 1;
 				}
@@ -758,17 +664,8 @@ protected:
 
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 0);
 				checkSide(&blockLimit, &recentlyWalls, matrixCoo, 1);
-
-
-				printf("%f ", blockLimit[1]);
-				printf("%f ", blockLimit[0]);
-				printf("%f ", blockLimit[3]);
-				printf("%f \n", blockLimit[2]);
 			}
 		}
-
-
-
 
 		static glm::mat4 CamMat = glm::translate(glm::transpose(glm::mat4(CamDir)), -CamPos);
 		glm::vec3 RRCDP = glm::vec3(glm::rotate(glm::mat4(1), lookPitch, glm::vec3(0, 1, 0)) *
@@ -783,8 +680,7 @@ protected:
 
 		void* data;
 
-
-		// Here is where you actually update your uniforms
+		// here is where you actually update your uniforms
 		for (int i = 0; i < 25; i++) {
 			ubo.model = glm::mat4(1);
 			if (i == 2) {
@@ -883,22 +779,22 @@ protected:
 				if (dCheck5 && timer5 < 2.0) {
 					timer5 = timer5 + deltaT;
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
-						* glm::rotate(glm::mat4(1.0f), timer4 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
+						* glm::rotate(glm::mat4(1.0f), timer5 * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 				else if (dCheck5) {
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
 						* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 				else {
 					ubo.model = glm::translate(glm::mat4(1.0), D5Pos)
-						* glm::translate(glm::mat4(1.0), glm::vec3(4, 0.0, -2))
-						* glm::translate(glm::mat4(1.0), glm::vec3(-4, 0.0, 2))
+						* glm::translate(glm::mat4(1.0), glm::vec3(4.4, 0.0, -2.35))
+						* glm::translate(glm::mat4(1.0), glm::vec3(-4.4, 0.0, 2.35))
 						* glm::translate(glm::mat4(1.0), -D5Pos);
 				}
 			}
@@ -964,40 +860,27 @@ protected:
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_K)) {
-			if (kCheck1) {
-				if (kCheck2)
-					printf("\nT  T\n");
-				else
-					printf("\nT  F\n");
-			}
-			else{
-				if (kCheck2)
-					printf("\nF  T\n");
-				else
-					printf("\nF  F\n");
-			}
-			printf("\nX: %f  Y: %f  Z: %f  L: %f\n", RobotPos.x, RobotPos.y, RobotPos.z, lookPitch);
-			if (RobotPos.x > 1.5 && RobotPos.x < 2.5 && 2 < RobotPos.z && RobotPos.z < 2.5 && (lookPitch > 240.0 && lookPitch < 300.0)) {
+			if (RobotPos.x >= 1.5 && RobotPos.x <= 2.5 && 2 <= RobotPos.z && RobotPos.z <= 2.5 && (lookPitch >= 240.0 && lookPitch <= 300.0)) {
 				D1Pos = glm::vec3(0.0, 0.0, 0.4);
 				L1Pos = glm::vec3(2.5, 0.50, -2.2);
 				L1Rot.z = 90.0f;
 				dCheck1 = true;
 			}
-			if (RobotPos.x > 5.75 && RobotPos.x < 6.5 && 7.75 < RobotPos.z && RobotPos.z < 8.5 && kCheck1 && (lookPitch > 250.0 && lookPitch < 290.0)) {
+			if (RobotPos.x >= 5.75 && RobotPos.x <= 6.5 && 7.75 <= RobotPos.z && RobotPos.z <= 8.5 && kCheck1 && (lookPitch >= 250.0 && lookPitch <= 290.0)) {
 				dCheck2 = true;
 				D2Pos = glm::vec3(0.0, 0.0, 0.4);
 			}
-			if (RobotPos.x > 8.0 && RobotPos.x < 8.75 && 4.00 < RobotPos.z && RobotPos.z < 4.75 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
+			if (RobotPos.x >= 8.0 && RobotPos.x <= 8.75 && 4.00 <= RobotPos.z && RobotPos.z <= 4.75 && ((lookPitch >= 340.0 && lookPitch <= 360.0) || (lookPitch >= 0.0 && lookPitch <= 20.0))) {
 				D3Pos = glm::vec3(0.0, 0.0, 0.35);
 				L3Rot.x = 70.0;
 				dCheck3 = true;
 			}
-			if (RobotPos.x > 11.5 && RobotPos.x < 12.25 && 2.75 < RobotPos.z && RobotPos.z < 3.5 && kCheck2 && (lookPitch > 160.0 && lookPitch < 200.0)) {
+			if (RobotPos.x >= 11.5 && RobotPos.x <= 12.25 && 2.75 <= RobotPos.z && RobotPos.z <= 3.5 && kCheck2 && (lookPitch >= 160.0 && lookPitch <= 200.0)) {
 				D4Pos = glm::vec3(0.0, 0.0, 0.35);
 				dCheck4 = true;
 			}
-			if (RobotPos.x > 3.0 && RobotPos.x < 3.5 && -1.00 < RobotPos.z && RobotPos.z < -0.25 && ((lookPitch > 340.0 && lookPitch < 360.0) || (lookPitch > 0.0 && lookPitch < 20.0))) {
-				D5Pos = glm::vec3(0.0, 0.0, -0.35);
+			if (RobotPos.x >= 3.0 && RobotPos.x <= 3.5 && -1.00 <= RobotPos.z && RobotPos.z <= -0.25 && ((lookPitch >= 340.0 && lookPitch <= 360.0) || (lookPitch >= 0.0 && lookPitch <= 20.0))) {
+				D5Pos = glm::vec3(0.0, 0.0, 0.35);
 				L5Rot.x = 70.0;
 				dCheck5 = true;
 			}
@@ -1014,10 +897,6 @@ protected:
 	}
 };
 
-
-
-
-// This is the main: probably you do not need to touch this!
 int main() {
 	MyProject app;
 
